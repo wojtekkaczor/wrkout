@@ -17,9 +17,9 @@ flowchart LR
 
 | KM | Nazwa | Efekt dla użytkownika | Rozmiar |
 |---|---|---|---|
-| M0 | Fundament | Pusta aplikacja zainstalowana na telefonie, działa offline | mały |
-| M1 | Siła | Plan siłowy, logowanie serii, automatyczna progresja | duży |
-| M2 | Bieganie i hybryda | Pełny plan hybrydowy, samopoczucie, bloki i deload | duży |
+| M0 | Fundament | Pusta aplikacja zainstalowana na iPhonie, działa offline | mały |
+| M1 | Siła | Plan siłowy, szybkie wpisywanie serii (na bieżąco i po fakcie), automatyczna progresja, historia i rekordy | duży |
+| M2 | Bieganie i hybryda | Pełny plan hybrydowy, samopoczucie, bloki i deload, raporty tygodnia i bloku | duży |
 | M3 | Chmura | Logowanie, synchronizacja, kopia, wiele urządzeń | średni |
 | M4 | Import biegów | Biegi z zegarka trafiają do aplikacji same; import plików | średni |
 | M5 | Trener AI | Propozycje bloków, podsumowania tygodnia, polecenia tekstowe | średni |
@@ -44,7 +44,8 @@ Kolejność M2 i M3 można odwrócić, jeśli kopia w chmurze ma być wcześniej
 
 **Gotowe, gdy**
 
-- Aplikacja pod adresem HTTPS instaluje się na ekranie głównym telefonu i uruchamia bez sieci.
+- Aplikacja pod adresem HTTPS instaluje się na ekranie głównym iPhone'a i uruchamia bez sieci.
+- Dane zapisane w zainstalowanej aplikacji przetrwają jej zamknięcie i ponowne uruchomienie telefonu.
 - `GET /api/health` odpowiada z produkcji.
 - CI przechodzi; wdrożenie to jedna komenda.
 
@@ -56,19 +57,20 @@ Kolejność M2 i M3 można odwrócić, jeśli kopia w chmurze ma być wcześniej
 
 - Biblioteka ćwiczeń (około 120) i szablony podziałów.
 - Onboarding w części siłowej; generowanie szkieletu tygodnia.
-- Ekran „Dziś”, ekran sesji, edycja serii, timer przerw, zamiana ćwiczenia, zakończenie sesji, wznowienie przerwanej sesji.
+- Ekran „Dziś”, ekran sesji, edycja serii, odhaczanie całego ćwiczenia i całej sesji, wpis po fakcie z datą treningu, zamiana ćwiczenia, raport z treningu, wznowienie przerwanej sesji.
 - Silnik: progresja (tabela decyzji), kalibracja, RIR w tygodniach bloku, deload, powrót po przerwie, wyjaśnienia.
 - Plan: widok tygodnia, edycja sesji i szkieletu, przenoszenie, pomijanie, sesja spoza planu.
 - Własne ćwiczenia, ustawienia ćwiczenia, notatki.
-- Historia treningów i ćwiczenia, wykres e1RM, rekordy.
+- Historia treningów i ćwiczenia, wykres e1RM, rekordy, dodanie treningu z dowolną datą.
 - Eksport i import JSON.
 
-**Wymagania:** FR-ONB-1, 3, 4, 6, 8 · FR-PLAN-1, 2, 3, 5 · FR-STR-1–12, 15, 18 · FR-ENG-1, 2, 7, 8, 9 · FR-EDIT-1, 2, 4–9 · FR-PROG-1–3 · FR-SYNC-1, 2 · FR-SYS-4.
+**Wymagania:** FR-ONB-1, 3, 4, 6, 8 · FR-PLAN-1, 2, 3, 5 · FR-STR-1–12, 15, 18, 19 · FR-ENG-1, 2, 7, 8, 9 · FR-EDIT-1, 2, 4–9 · FR-PROG-1–3, 9 · FR-SYNC-1, 2 · FR-SYS-4.
 
 **Gotowe, gdy**
 
-- Scenariusze silnika S1–S6, S13, S16, S17 przechodzą jako testy.
-- Pełna sesja siłowa daje się przeprowadzić offline na telefonie; seria zgodna z planem to jedno dotknięcie.
+- Scenariusze silnika S1–S6, S13, S16, S17, S19 przechodzą jako testy.
+- Pełną sesję siłową da się wpisać offline na iPhonie; seria zgodna z planem to jedno dotknięcie, całe ćwiczenie także.
+- Trening zgodny z planem da się wpisać po fakcie w nie więcej niż 5 dotknięć.
 - Po zakończeniu sesji kolejna recepta wynika z tabeli decyzji i ma wyjaśnienie.
 - Test przepływu: onboarding → sesja → zamknięcie aplikacji w połowie → wznowienie → zakończenie → kolejna recepta.
 
@@ -84,13 +86,14 @@ Kolejność M2 i M3 można odwrócić, jeśli kopia w chmurze ma być wcześniej
 - Cykl planu: przejście tygodnia, realizacja, powtórzenie tygodnia, pauza i powrót, wcześniejszy deload.
 - Kolejny blok z reguł; ekran propozycji; dziennik zmian i cofanie.
 - Walidator limitów z ostrzeżeniami przy edycji.
-- Postępy biegowe i realizacja planu; widok bloku.
+- Postępy biegowe, serie na partię, realizacja planu; raport tygodnia i raport bloku; widok bloku.
 
-**Wymagania:** FR-ONB-2, 5, 7, 9 · FR-PLAN-4, 6 (silnik), 7, 8 · FR-RUN-1–3, 6, 7 · FR-RDY-1–5 · FR-ENG-3–6, 11 · FR-EDIT-3, 10–13 · FR-PROG-5, 6.
+**Wymagania:** FR-ONB-2, 5, 7, 9 · FR-PLAN-4, 6 (silnik), 7, 8 · FR-RUN-1–3, 6, 7 · FR-RDY-1–5 · FR-ENG-3–6, 11 · FR-EDIT-3, 10–13 · FR-PROG-4–8.
 
 **Gotowe, gdy**
 
-- Scenariusze S7–S12, S14, S15 przechodzą jako testy.
+- Scenariusze S7–S12, S14, S15, S18 przechodzą jako testy.
+- Raport tygodnia pokazuje wykonane względem planu, serie na partię, rekordy i kilometraż, bez sieci i bez AI.
 - Nowy tydzień generuje się sam, także offline, z układem zgodnym z regułami.
 - Samopoczucie 2 zmienia receptę zgodnie z tabelą i nie wpływa na kolejną progresję.
 - Po tygodniu deloadu pojawia się propozycja kolejnego bloku; bez reakcji plan idzie dalej.
@@ -132,7 +135,7 @@ Kolejność M2 i M3 można odwrócić, jeśli kopia w chmurze ma być wcześniej
 - Ten sam bieg zaimportowany dwiema drogami nie tworzy duplikatu.
 - Wygasły klucz daje czytelny komunikat, a aplikacja działa dalej.
 
-**Potrzebne od użytkownika:** klucz Garmin Personal API (jeśli używa Garmina); potwierdzenie decyzji w sprawie Stravy.
+**Potrzebne od użytkownika:** klucz Garmin Personal API wygenerowany na koncie Garmin Connect.
 
 ### M5 · Trener AI
 
@@ -161,7 +164,7 @@ Lista do wyboru po kilku tygodniach używania:
 - Serie rozgrzewkowe z podpowiedzią, drop sety, superserie (FR-STR-13, 14, 17).
 - Korekta ciężaru w trakcie sesji (FR-STR-16).
 - Progresja objętości w bloku (FR-ENG-10).
-- Serie na partię w postępach, podsumowanie bloku (FR-PROG-4, 7).
+- Trening siłowy z zegarka jako podpowiedź do wpisu (FR-INT-7).
 - Waga ciała (FR-RDY-6).
 - Fazy pod start z datą (FR-PLAN-9); strefy tętna (FR-RUN-8).
 - Inne aktywności jako obciążenie (FR-RUN-10).
@@ -202,5 +205,5 @@ Lista do wyboru po kilku tygodniach używania:
 | Garmin Personal API działa inaczej, niż opisano, albo ma niekorzystne warunki | M4 | Eksperyment na początku M4; plan zapasowy: import plików |
 | Reguły progresji okażą się zbyt ostrożne lub zbyt agresywne | Po M1 | Parametry w konfiguracji; strojenie po 2–3 tygodniach danych |
 | Ekran sesji niewygodny w praktyce | M1 | Test na siłowni przed zamknięciem M1; poprawki mają pierwszeństwo przed nowymi funkcjami |
-| Ograniczenia PWA na konkretnym telefonie (timer, ekran) | M1 | Test na docelowym urządzeniu w M0–M1 |
+| Zachowanie PWA na iPhonie (instalacja, trwałość danych, klawiatura numeryczna) | M0–M1 | Test na docelowym iPhonie już w M0 |
 | Zmiany w API Claude lub cenach | M5 | Model i ceny w konfiguracji; funkcja jest opcjonalna |

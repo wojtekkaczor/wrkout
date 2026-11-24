@@ -128,7 +128,7 @@ Wynik nigdy nie spada poniżej minimum z tabeli 4.3. Przy priorytecie biegowym >
 
 `czas = 5 min rozgrzewki + Σ po slotach [serie × (40 s pracy + przerwa)] + 1 min na zmianę ćwiczenia`
 
-Przerwy domyślne: wielostawowe główne 180 s, wielostawowe pomocnicze 150 s, izolowane 90 s.
+Przerwy przyjmowane do szacunku: wielostawowe główne 180 s, wielostawowe pomocnicze 150 s, izolowane 90 s. Aplikacja ich nie odmierza; służą wyłącznie do oszacowania czasu sesji.
 
 Gdy czas przekracza limit użytkownika, generator usuwa serie od końca listy (najpierw izolowane partii niepriorytetowych), aż zmieści się w limicie, nie schodząc poniżej minimum objętości.
 
@@ -363,6 +363,8 @@ Suma kar: 10 (akcent dzień po biegu długim: 6; dwa dni z dwiema sesjami: 4). �
 
 Przed sesją jedno pytanie w skali 1–5 i opcjonalne flagi. Modyfikacja dotyczy tylko bieżącej sesji i nie zmienia ciężarów bazowych.
 
+Pytanie pojawia się przy rozpoczynaniu dzisiejszej sesji. Przy wpisywaniu treningu po fakcie jest pomijane, a sesja jest traktowana jak wykonana bez modyfikacji.
+
 ### 8.1 Siła
 
 | Ocena | Modyfikacja |
@@ -407,6 +409,7 @@ Przyjęcie propozycji zamienia bieżący tydzień w deload i kończy blok.
 ### 9.1 W trakcie tygodnia
 
 - Sesję można wykonać w dowolny dzień tygodnia („Zrób dziś”).
+- Sesję można wpisać po fakcie, z datą treningu. Silnik porządkuje historię według daty treningu, a nie daty wpisu.
 - Niewykonana sesja z poprzednich dni jest pokazywana jako zaległa, z akcjami „Zrób dziś” i „Pomiń”.
 - Silnik nie przestawia sam pozostałych sesji; może zaproponować kolejność, gdy zaległa i dzisiejsza kolidują.
 
@@ -414,12 +417,13 @@ Przyjęcie propozycji zamienia bieżący tydzień w deload i kończy blok.
 
 Wykonywane przy pierwszym otwarciu aplikacji w nowym tygodniu, także offline.
 
-1. Zamknięcie tygodnia: niewykonane sesje dostają status „pominięta”.
+1. Zamknięcie tygodnia: niewykonane sesje dostają status „pominięta”. Taką sesję nadal można uzupełnić wpisem po fakcie; wraca wtedy do statusu „wykonana”.
 2. Realizacja = wykonane sesje / zaplanowane sesje.
 3. Numer tygodnia w bloku:
    - realizacja ≥ 50% → kolejny tydzień,
    - realizacja < 50% → powtórzenie tego samego tygodnia (najwyżej raz w bloku; nie dotyczy deloadu),
-   - brak jakiejkolwiek sesji przez 2 tygodnie bez zgłoszonej pauzy → traktowane jak przerwa (§9.3).
+   - brak jakiejkolwiek sesji przez 2 tygodnie bez zgłoszonej pauzy → traktowane jak przerwa (§9.3),
+   - wpis po fakcie w zamkniętym tygodniu przelicza tę decyzję, dopóki w nowym tygodniu nie wykonano żadnej sesji.
 4. Wygenerowanie sesji nowego tygodnia: układ dni (§7), kilometraż i przepisy biegów (§6), numery tygodnia dla RIR (§3).
 5. Recepty siłowe są wyliczane przy otwarciu sesji, więc zawsze uwzględniają najnowsze wyniki. Podgląd w Planie pokazuje wartości przewidywane.
 
@@ -499,7 +503,7 @@ Wszystkie stałe są w jednym miejscu (`engine/config.ts`).
 | Blok | liczba tygodni pracy (4), RIR start/koniec (3/1, 2/0), mnożniki deloadu (ciężar 0,9, serie 0,5) |
 | Progresja | stała e1RM (30), okno wykonania referencyjnego (28 dni), redukcja (10%), powrót (5% / tydz., maks. 20%), próg stagnacji (3 wykonania), próg przyspieszenia (RIR + 2), rozszerzenie zakresu (+5) |
 | Skoki | sztanga 2,5; hantle 2; maszyna 5; masa ciała 2,5 |
-| Przerwy | 180 / 150 / 90 s |
+| Szacowanie czasu sesji | 40 s na serię; przerwy przyjmowane do szacunku 180 / 150 / 90 s |
 | Objętość | tabela §4.3, mnożniki nóg §4.4 |
 | Bieg: tempa | procenty VDOT z §6.2, szerokość zakresu ± 5 s/km |
 | Bieg: objętość | wzrost 7%, deload 75%, udziały §6.3, sufity §6.5, limit biegu długiego 150 min i + 2 km |
@@ -532,3 +536,5 @@ Scenariusze są jednocześnie kryteriami akceptacji silnika. Każdy staje się t
 | S15 | Propozycja z 30 seriami na klatkę tygodniowo | Walidator odrzuca |
 | S16 | Użytkownik przypiął ćwiczenie; generowany jest kolejny blok | Ćwiczenie zostaje |
 | S17 | Zmiana zakresu z 6–10 na 10–15 przy e1RM 110 kg, RIR 3 | `RANGE_CHANGE`: 110 / (1 + 15,5/30) = 72,5 kg |
+| S18 | Trening z niedzieli wpisany w poniedziałek, po przejściu tygodnia; realizacja rośnie z 40% do 60%; w nowym tygodniu nie ma jeszcze wykonanej sesji | Sesja zmienia status na „wykonana”; powtórzenie tygodnia zostaje cofnięte |
+| S19 | Dwa treningi tego samego ćwiczenia wpisane w odwrotnej kolejności dat | Wykonaniem referencyjnym jest trening o późniejszej dacie treningu |

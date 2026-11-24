@@ -1,8 +1,8 @@
 # wrkout
 
-Prywatna aplikacja do treningu hybrydowego: siłownia i bieganie w jednym planie. Aplikacja sama programuje kolejne jednostki na podstawie celów, wyników i samopoczucia; logowanie serii zajmuje jedno dotknięcie, a każdy element planu można zmienić ręcznie.
+Prywatna aplikacja do treningu hybrydowego: siłownia i bieganie w jednym planie. Aplikacja sama programuje kolejne jednostki na podstawie celów, wyników i samopoczucia; wpisanie serii zajmuje jedno dotknięcie, a każdy element planu można zmienić ręcznie. Jest planerem i dziennikiem z raportami postępów; czas i przerwy odmierza zegarek.
 
-**Stan projektu:** specyfikacja gotowa do akceptacji; kod jeszcze nie powstał.
+**Stan projektu:** specyfikacja w wersji 1.1; kod jeszcze nie powstał.
 
 ## Dokumentacja
 
@@ -20,7 +20,8 @@ Pełna specyfikacja jest w katalogu [`docs/`](docs/README.md):
 
 ## W skrócie
 
-- **Forma:** PWA (React, TypeScript), instalowana na telefonie, działa offline.
+- **Forma:** PWA (React, TypeScript), instalowana na iPhonie, działa offline.
+- **Biegi:** import z zegarka przez Garmin Personal API, z pliku albo ręcznie.
 - **Planowanie:** deterministyczny silnik reguł na urządzeniu; opcjonalny trener AI proponuje zmiany struktury planu.
 - **Dane:** lokalnie w IndexedDB, synchronizowane do Cloudflare D1.
 - **Serwer:** jeden Cloudflare Worker (pliki aplikacji, API, import biegów, pośrednik AI).

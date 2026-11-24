@@ -6,7 +6,7 @@ Prywatna PWA do treningu hybrydowego (siła + bieganie) dla jednego użytkownika
 
 Specyfikacja w `docs/` (start: `docs/README.md`). Przed zmianą zachowania aplikacji przeczytaj właściwy dokument. Gdy decyzja się zmienia, najpierw zaktualizuj dokument, potem kod.
 
-- Reguły treningowe: `docs/03-silnik-treningowy.md` (scenariusze S1–S17 są testami akceptacyjnymi silnika).
+- Reguły treningowe: `docs/03-silnik-treningowy.md` (scenariusze S1–S19 są testami akceptacyjnymi silnika).
 - Kształt danych i operacje na planie: `docs/06-model-danych.md`.
 - Kolejność prac i kryteria ukończenia: `docs/09-plan-wdrozenia.md`.
 
@@ -22,5 +22,7 @@ Specyfikacja w `docs/` (start: `docs/README.md`). Przed zmianą zachowania aplik
 - Dane w jednostkach podstawowych: kilogramy, metry, sekundy.
 
 ## Zasady produktu
+
+Platforma docelowa: iPhone, PWA z ekranu głównego. Aplikacja jest planerem i dziennikiem, nie stoperem: nie ma timera przerw ani stopera (robi to zegarek Garmin), a wpis na bieżąco i po fakcie to ten sam ekran. Historię porządkuje data treningu, nie data wpisu. Stravy nie integrujemy.
 
 Prostota ma pierwszeństwo: seria zgodna z planem to jedno dotknięcie, aplikacja działa offline, nic nie blokuje treningu. Nowa funkcja, która dodaje ekran lub decyzję przy każdym treningu, wymaga uzasadnienia (zob. `docs/01-wizja-i-wymagania-biznesowe.md` §7).

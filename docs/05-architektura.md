@@ -115,7 +115,7 @@ Reguły wymuszane lintem:
 
 **Zapis.** Akcja użytkownika → repozytorium zapisuje dokument w IndexedDB (z `updatedAt` i znacznikiem „do wysłania”) → interfejs odświeża się przez zapytanie reaktywne → klient synchronizacji wysyła zmianę, gdy jest sieć.
 
-**Odczyt.** Komponenty subskrybują zapytania Dexie. Nie ma osobnego magazynu stanu aplikacji; baza lokalna jest stanem. Stan czysto interfejsowy (otwarty panel, timer) trzymany jest w komponentach.
+**Odczyt.** Komponenty subskrybują zapytania Dexie. Nie ma osobnego magazynu stanu aplikacji; baza lokalna jest stanem. Stan czysto interfejsowy (np. otwarty panel) trzymany jest w komponentach.
 
 **Recepty.** Przy otwarciu sesji `features/session` pobiera z repozytoriów historię ćwiczeń i kontekst (blok, tydzień, samopoczucie), woła `engine.prescribeStrengthSession(...)` i wyświetla wynik. Wynik jest zapisywany w logu sesji jako migawka recepty wraz z kodami powodów.
 
@@ -175,19 +175,19 @@ Aplikacja ma jednego użytkownika, więc nie ma rejestracji ani haseł.
 
 ## 9. PWA: możliwości i ograniczenia
 
-Stan na 2026-11-17 (Safari na iOS, Chrome na Androidzie).
+Platformą docelową jest iPhone z aplikacją zainstalowaną na ekranie głównym. Stan na 2026-11-17.
 
-| Funkcja | iOS (zainstalowana na ekranie głównym) | Android (Chrome) | Wpływ na projekt |
-|---|---|---|---|
-| Praca offline, IndexedDB | Tak | Tak | Podstawa architektury |
-| Trwałość danych | Aplikacja z ekranu głównego nie podlega 7-dniowemu czyszczeniu; `storage.persist()` działa | Tak | Aplikacja prosi o trwały magazyn; kopia w chmurze |
-| Wspólne dane z przeglądarką | Nie: zainstalowana aplikacja ma osobny magazyn | Tak | Logowanie i onboarding wykonuje się po instalacji |
-| Ekran zawsze włączony (Wake Lock) | Tak, od iOS 18.4 w aplikacji zainstalowanej | Tak | Włączony podczas sesji |
-| Wibracja | Nie | Tak | Timer sygnalizuje dźwiękiem; wibracja tylko na Androidzie |
-| Dźwięk przy zablokowanym ekranie | Zawodny | Zawodny | Ekran pozostaje włączony; timer jest widoczny |
-| Synchronizacja w tle | Nie | Tak (tylko zainstalowana) | Synchronizacja przy otwarciu i przy powrocie na pierwszy plan |
-| Powiadomienia push | Tak, od iOS 16.4, po zgodzie | Tak | Opcjonalne przypomnienia w późniejszym etapie |
-| Instalacja w UE | Wspierana | Wspierana | Brak ograniczeń |
+| Funkcja | iPhone (aplikacja z ekranu głównego) | Wpływ na projekt |
+|---|---|---|
+| Praca offline, IndexedDB | Tak | Podstawa architektury |
+| Trwałość danych | Aplikacja z ekranu głównego nie podlega 7-dniowemu czyszczeniu danych; `storage.persist()` działa | Aplikacja prosi o trwały magazyn; kopia w chmurze |
+| Wspólne dane z Safari | Nie: zainstalowana aplikacja ma osobny magazyn | Logowanie i onboarding wykonuje się po instalacji |
+| Synchronizacja w tle | Nie | Synchronizacja przy otwarciu i przy powrocie na pierwszy plan |
+| Powiadomienia push | Tak, od iOS 16.4, po zgodzie | Opcjonalne przypomnienia w późniejszym etapie |
+| Instalacja w UE | Wspierana | Brak ograniczeń |
+| Dźwięk w tle, wibracja, blokada wygaszania ekranu | Ograniczone lub niedostępne | Bez znaczenia: aplikacja nie odmierza czasu (ADR-8) |
+
+Aplikacja działa też w przeglądarce na komputerze (przegląd planu i postępów).
 
 Aktualizacje: service worker pobiera nową wersję w tle, a aplikacja pokazuje baner. Przeładowanie następuje po dotknięciu banera albo przy kolejnym uruchomieniu, nigdy w trakcie sesji treningowej.
 
@@ -221,10 +221,10 @@ Usunięcia są znacznikami (`deleted`), a dokumenty usunięte są czyszczone po 
 
 | Poziom | Zakres | Narzędzie |
 |---|---|---|
-| Silnik | Każda reguła i scenariusze S1–S17 z [03 §14](03-silnik-treningowy.md#14-scenariusze-testowe); testy własności (np. recepta zawsze na siatce skoku, harmonogram nigdy nie łamie warunków twardych) | Vitest |
+| Silnik | Każda reguła i scenariusze S1–S19 z [03 §14](03-silnik-treningowy.md#14-scenariusze-testowe); testy własności (np. recepta zawsze na siatce skoku, harmonogram nigdy nie łamie warunków twardych) | Vitest |
 | Dane | Repozytoria, migracje, eksport/import, klient synchronizacji na atrapie IndexedDB | Vitest |
 | API | Logowanie, sync (kolejność, konflikty, kursor), budżet AI, import na atrapie Garmina | Vitest w środowisku Workers |
-| Przepływy | Onboarding, pełna sesja offline, wznowienie sesji, edycja planu, synchronizacja dwóch kontekstów przeglądarki | Playwright (profil telefonu) |
+| Przepływy | Onboarding, pełna sesja offline, wpis po fakcie, wznowienie sesji, edycja planu, synchronizacja dwóch kontekstów przeglądarki | Playwright (WebKit, profil iPhone'a) |
 | AI | Zestaw przykładowych kontekstów; odpowiedzi muszą przejść schemat i walidator | Skrypt uruchamiany ręcznie (koszt) |
 
 ## 13. Obserwowalność
@@ -252,7 +252,7 @@ Koszty stałe: 0 zł. Koszt AI: szacunkowo 1–3 USD miesięcznie, z twardym lim
 ## 15. Rejestr decyzji (ADR)
 
 ### ADR-1 · PWA zamiast aplikacji natywnej
-**Decyzja:** PWA. **Powód:** użytek prywatny, brak kont deweloperskich i sklepów, jedna baza kodu. **Koszt:** brak HealthKit/Health Connect, brak wibracji i pracy w tle na iOS. **Kiedy wrócić do tematu:** gdy potrzebna będzie aplikacja na zegarek albo odczyt danych zdrowotnych z telefonu.
+**Decyzja:** PWA. **Powód:** użytek prywatny, brak kont deweloperskich i sklepów, jedna baza kodu. **Koszt:** brak dostępu do HealthKit i brak pracy w tle na iOS. **Kiedy wrócić do tematu:** gdy potrzebna będzie aplikacja na zegarek albo odczyt danych zdrowotnych z telefonu.
 
 ### ADR-2 · Cloudflare Workers + D1 zamiast Supabase
 **Decyzja:** jeden Worker z plikami statycznymi, API i D1. **Powód:** jedna usługa i jedno wdrożenie; darmowy projekt Supabase jest wstrzymywany po tygodniu bez aktywności (przerwa w treningach zatrzymałaby import i synchronizację do ręcznego wznowienia); lokalne środowisko bez Dockera; brak limitu czasu dla strumieni AI. **Koszt:** własne, proste uwierzytelnienie zamiast gotowego; SQLite zamiast Postgresa (bez znaczenia przy modelu dokumentowym).
@@ -269,5 +269,8 @@ Koszty stałe: 0 zł. Koszt AI: szacunkowo 1–3 USD miesięcznie, z twardym lim
 ### ADR-6 · Klucz dostępu zamiast kont
 **Decyzja:** jeden losowy klucz i ciasteczko sesji. **Powód:** jeden użytkownik, zero formularzy rejestracji i resetu hasła. **Kiedy wrócić do tematu:** przy drugim użytkowniku (wtedy passkeys).
 
-### ADR-7 · Import biegów: Garmin Personal API i pliki; Strava wstrzymana
-**Decyzja:** automatyczny import przez osobiste API Garmina, uniwersalny import plików, wpis ręczny. Integracja ze Stravą nie wchodzi do pierwszej wersji. **Powód:** zasady API Stravy obowiązujące od 2026-06-01 zakazują przechowywania danych dłużej niż 7 dni i użycia ich w aplikacjach AI, a dostęp wymaga płatnej subskrypcji. Garmin od 2026-10-21 udostępnia darmowe API do własnych danych. **Zastrzeżenie:** ustalenia pochodzą z wyciągów stron źródłowych i wymagają potwierdzenia przed budową integracji. Szczegóły i warianty: [08](08-integracje.md).
+### ADR-7 · Import biegów: Garmin Personal API i pliki; bez Stravy
+**Decyzja:** automatyczny import przez osobiste API Garmina, uniwersalny import plików, wpis ręczny. Stravę pominięto decyzją użytkownika z 2026-11-24. **Powód:** zasady API Stravy obowiązujące od 2026-06-01 zakazują przechowywania danych dłużej niż 7 dni i użycia ich w aplikacjach AI, a dostęp wymaga płatnej subskrypcji. Garmin od 2026-10-21 udostępnia darmowe API do własnych danych. **Zastrzeżenie:** ustalenia pochodzą z wyciągów stron źródłowych i wymagają potwierdzenia przed budową integracji. Szczegóły: [08](08-integracje.md).
+
+### ADR-8 · Aplikacja nie odmierza czasu
+**Decyzja (użytkownik, 2026-11-24):** brak timera przerw, stopera treningu, sygnałów dźwiękowych i blokady wygaszania ekranu. Przerwy i czas odmierza zegarek. **Powód:** aplikacja ma być planerem i dziennikiem: szybkie wpisywanie, progres, raporty. **Skutki:** wpis na bieżąco i po fakcie to ten sam ekran; data treningu jest niezależna od chwili wpisu; czas trwania sesji jest polem opcjonalnym; ograniczenia iOS dotyczące dźwięku, wibracji i ekranu przestają mieć znaczenie.

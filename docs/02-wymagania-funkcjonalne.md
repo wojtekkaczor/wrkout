@@ -41,13 +41,13 @@ Pojęcia (blok, slot, recepta, RIR, VDOT) wyjaśnia [słownik w README](README.m
 | FR-STR-2 | Odhaczenie serii jednym dotknięciem zapisuje ją z wartościami z recepty | M | M1 |
 | FR-STR-3 | Zmiana ciężaru i powtórzeń przyciskami ± (krok równy skokowi obciążenia ćwiczenia) lub klawiaturą numeryczną | M | M1 |
 | FR-STR-4 | RIR serii: opcjonalny wybór 0 / 1 / 2 / 3 / 4+ jednym dotknięciem; domyślnie przyjmowany RIR docelowy | M | M1 |
-| FR-STR-5 | Timer przerwy startuje po odhaczeniu serii; czas zależy od typu ćwiczenia; można go pominąć lub wydłużyć | M | M1 |
+| FR-STR-5 | Odhaczenie całego ćwiczenia jednym dotknięciem (wszystkie serie zgodnie z receptą) oraz całej sesji („Wszystko zgodnie z planem”); potem wystarczy poprawić odstępstwa | M | M1 |
 | FR-STR-6 | Każda zmiana zapisuje się natychmiast lokalnie; przerwaną sesję można wznowić po zamknięciu aplikacji | M | M1 |
 | FR-STR-7 | W trakcie sesji: zamiana ćwiczenia (lista zamienników dla tej samej partii i wzorca ruchu), dodanie lub usunięcie ćwiczenia i serii, zmiana kolejności | M | M1 |
 | FR-STR-8 | Przy zamianie ćwiczenia wybór: „tylko dziś” albo „na stałe w planie” | M | M1 |
 | FR-STR-9 | Pierwsze wykonanie ćwiczenia działa w trybie kalibracji: użytkownik dobiera ciężar, aplikacja podpowiada kolejne serie na podstawie pierwszej | M | M1 |
-| FR-STR-10 | Zakończenie sesji: ocena wysiłku (RPE 1–10) i opcjonalna notatka; podsumowanie z rekordami | M | M1 |
-| FR-STR-11 | Ekran pozostaje włączony w trakcie sesji | M | M1 |
+| FR-STR-10 | Raport z treningu na zakończenie sesji: wysiłek (RPE 1–10) i opcjonalna notatka; podsumowanie z rekordami | M | M1 |
+| FR-STR-11 | Wpisanie treningu po fakcie: ten sam ekran sesji z wybraną datą treningu (dziś, dzień zaplanowany, inna data); bez pytania o samopoczucie | M | M1 |
 | FR-STR-12 | Trening spoza planu: pusta sesja, do której dodaje się ćwiczenia ręcznie | S | M1 |
 | FR-STR-13 | Rodzaje serii: robocza, rozgrzewkowa (nie liczy się do progresji), drop set | S | M6 |
 | FR-STR-14 | Podpowiedź serii rozgrzewkowych dla pierwszego ćwiczenia wielostawowego | C | M6 |
@@ -55,6 +55,7 @@ Pojęcia (blok, slot, recepta, RIR, VDOT) wyjaśnia [słownik w README](README.m
 | FR-STR-16 | Korekta w trakcie sesji: gdy pierwsza seria odbiega od celu o 3 lub więcej powtórzeń, aplikacja proponuje zmianę ciężaru na kolejne serie | S | M6 |
 | FR-STR-17 | Superserie (dwa ćwiczenia naprzemiennie) | C | M6 |
 | FR-STR-18 | Notatka przypięta do ćwiczenia (np. ustawienie maszyny), widoczna przy każdym wykonaniu | S | M1 |
+| FR-STR-19 | Aplikacja nie odmierza czasu: brak timera przerw i stopera treningu; czas trwania sesji jest polem opcjonalnym | M | M1 |
 
 ## 4. Bieganie (RUN)
 
@@ -75,7 +76,7 @@ Pojęcia (blok, slot, recepta, RIR, VDOT) wyjaśnia [słownik w README](README.m
 
 | ID | Wymaganie | Prio | KM |
 |---|---|---|---|
-| FR-RDY-1 | Przed startem sesji jedno pytanie „Jak się dziś czujesz?” w skali 1–5; odpowiedź jednym dotknięciem; można pominąć | M | M2 |
+| FR-RDY-1 | Przed startem dzisiejszej sesji jedno pytanie „Jak się dziś czujesz?” w skali 1–5; odpowiedź jednym dotknięciem; można pominąć; nie pojawia się przy wpisywaniu po fakcie | M | M2 |
 | FR-RDY-2 | Opcjonalne flagi: słaby sen, zakwasy (nogi / góra), ból (obszar), choroba, stres | S | M2 |
 | FR-RDY-3 | Recepta sesji dostosowuje się do gotowości według reguł z [03 §8](03-silnik-treningowy.md#8-gotowo%C5%9B%C4%87-i-samopoczucie); użytkownik widzi, co się zmieniło, i może przywrócić oryginał | M | M2 |
 | FR-RDY-4 | Zgłoszony ból obszaru ciała: aplikacja proponuje zamienniki ćwiczeń obciążających ten obszar | S | M2 |
@@ -112,7 +113,7 @@ Pełna specyfikacja reguł: [03 · Silnik treningowy](03-silnik-treningowy.md).
 | FR-EDIT-6 | Pominięcie sesji z opcjonalnym powodem | M | M1 |
 | FR-EDIT-7 | Edycja i usuwanie zapisanych treningów i biegów z historii | M | M1 |
 | FR-EDIT-8 | Własne ćwiczenia: nazwa, partie, sprzęt, skok obciążenia, typ pomiaru | M | M1 |
-| FR-EDIT-9 | Ustawienia ćwiczenia: skok obciążenia, preferowany zakres powtórzeń, czas przerwy, notatka | S | M1 |
+| FR-EDIT-9 | Ustawienia ćwiczenia: skok obciążenia, preferowany zakres powtórzeń, notatka | S | M1 |
 | FR-EDIT-10 | Zmiany użytkownika są oznaczane i nie są nadpisywane przez silnik w bieżącym bloku; propozycja kolejnego bloku je zachowuje, chyba że użytkownik zgodzi się na zmianę | M | M2 |
 | FR-EDIT-11 | Ręczna zmiana długości bloku, tygodnia deloadu i kilometrażu docelowego | S | M2 |
 | FR-EDIT-12 | Ostrzeżenie (bez blokowania), gdy ręczna zmiana przekracza limity z walidatora | S | M2 |
@@ -124,11 +125,13 @@ Pełna specyfikacja reguł: [03 · Silnik treningowy](03-silnik-treningowy.md).
 |---|---|---|---|
 | FR-PROG-1 | Historia treningów: lista chronologiczna, szczegóły każdej sesji | M | M1 |
 | FR-PROG-2 | Historia ćwiczenia: wszystkie wykonania, wykres szacowanego maksimum (e1RM) | M | M1 |
-| FR-PROG-3 | Rekordy: najlepszy e1RM, największy ciężar, najwięcej powtórzeń na danym ciężarze; oznaczenie w podsumowaniu sesji | S | M1 |
-| FR-PROG-4 | Tygodniowa liczba serii na partię mięśniową | S | M6 |
+| FR-PROG-3 | Rekordy: najlepszy e1RM, największy ciężar, najwięcej powtórzeń na danym ciężarze; oznaczenie w podsumowaniu sesji | M | M1 |
+| FR-PROG-4 | Tygodniowa liczba serii na partię mięśniową | S | M2 |
 | FR-PROG-5 | Tygodniowy kilometraż, czas biegu, trend tempa biegów spokojnych, historia VDOT | S | M2 |
 | FR-PROG-6 | Realizacja planu: wykonane względem zaplanowanych w tygodniu i bloku | S | M2 |
-| FR-PROG-7 | Podsumowanie bloku po jego zakończeniu | S | M6 |
+| FR-PROG-7 | Raport bloku po jego zakończeniu: zmiany e1RM, objętość, kilometraż, realizacja planu | S | M2 |
+| FR-PROG-8 | Raport tygodnia liczony lokalnie, bez AI: wykonane względem planu, serie na partię, rekordy, kilometraż, zmiana względem poprzedniego tygodnia | M | M2 |
+| FR-PROG-9 | Dodanie treningu z dowolną datą z poziomu historii | M | M1 |
 
 ## 9. Trener AI (AI)
 
@@ -156,6 +159,7 @@ Pełna specyfikacja: [08 · Integracje](08-integracje.md).
 | FR-INT-4 | Przypomnienie o wygasającym kluczu integracji na 14 dni przed terminem | M | M4 |
 | FR-INT-5 | Ta sama aktywność z dwóch źródeł (API, plik, wpis ręczny) nie tworzy duplikatu | M | M4 |
 | FR-INT-6 | Status integracji i data ostatniej synchronizacji widoczne w ustawieniach | S | M4 |
+| FR-INT-7 | Trening siłowy zarejestrowany zegarkiem jako podpowiedź do wpisu (czas trwania; serie, jeśli API je udostępnia) | C | M6 |
 
 ## 11. Dane, konto, synchronizacja (SYNC)
 
@@ -173,10 +177,10 @@ Pełna specyfikacja: [08 · Integracje](08-integracje.md).
 
 | ID | Wymaganie | Prio | KM |
 |---|---|---|---|
-| FR-SYS-1 | Aplikacja instalowana na ekranie głównym telefonu (PWA), uruchamiana bez paska przeglądarki | M | M0 |
+| FR-SYS-1 | Aplikacja instalowana na ekranie głównym iPhone'a (PWA), uruchamiana bez paska przeglądarki | M | M0 |
 | FR-SYS-2 | Informacja o nowej wersji z przyciskiem odświeżenia; aktualizacja nigdy nie przerywa trwającej sesji | M | M0 |
 | FR-SYS-3 | Tryb ciemny domyślnie; tryb jasny w ustawieniach | M | M0 |
-| FR-SYS-4 | Ustawienia: jednostki, początek tygodnia, skoki obciążenia, czasy przerw, dźwięk timera | S | M1 |
+| FR-SYS-4 | Ustawienia: początek tygodnia, skoki obciążenia, motyw | S | M1 |
 | FR-SYS-5 | Przypomnienia o treningu (powiadomienia push) | C | M6 |
 
 ## 13. Kluczowe historie użytkownika i kryteria akceptacji
@@ -188,7 +192,8 @@ Jako trenujący chcę otworzyć aplikację i od razu zacząć zaplanowany trenin
 - Po otwarciu aplikacji widzę kartę dzisiejszej sesji z nazwą, listą ćwiczeń i szacowanym czasem.
 - Jedno dotknięcie „Start” otwiera sesję (po drodze najwyżej jedno pytanie o samopoczucie, które mogę pominąć).
 - Każde ćwiczenie pokazuje serie z ciężarem i powtórzeniami oraz wynik z poprzedniego razu.
-- Dotknięcie pola serii zapisuje ją zgodnie z receptą i uruchamia timer przerwy.
+- Dotknięcie pola serii zapisuje ją zgodnie z receptą.
+- Jedno dotknięcie odhacza wszystkie serie ćwiczenia zgodnie z receptą.
 - Po zamknięciu i ponownym otwarciu aplikacji wracam do tej samej sesji z zachowanymi seriami.
 - Wszystko działa bez internetu.
 
@@ -247,6 +252,23 @@ Jako trenujący chcę otworzyć aplikację i od razu zacząć zaplanowany trenin
 - Na nowym urządzeniu loguję się kluczem dostępu.
 - Po synchronizacji widzę cały plan i historię.
 
+### US-11 · Wpisuję trening po fakcie
+
+Jako trenujący z zegarkiem chcę po treningu szybko wpisać, co zrobiłem, bez klikania każdej serii osobno.
+
+- Z karty sesji (dzisiejszej lub zaległej) wybieram „Wpisz” i datę treningu.
+- „Wszystko zgodnie z planem” odhacza całą sesję; poprawiam tylko serie, które poszły inaczej.
+- Trening zgodny z planem wpisuję w nie więcej niż 5 dotknięć, razem z raportem (RPE).
+- Kolejne recepty liczą się według daty treningu, także gdy wpisuję dwa treningi w odwrotnej kolejności.
+- Sesja oznaczona wcześniej jako pominięta po uzupełnieniu liczy się jako wykonana.
+
+### US-12 · Sprawdzam, jak mi idzie
+
+- W Postępach widzę raport tygodnia: co wykonałem względem planu, serie na partię, rekordy, kilometraż i zmianę względem poprzedniego tygodnia.
+- Dla każdego ćwiczenia widzę wykres szacowanego maksimum i wszystkie wykonania.
+- Po zakończeniu bloku dostaję raport bloku.
+- Raporty działają bez internetu i bez AI.
+
 ## 14. Wymagania niefunkcjonalne (NFR)
 
 | ID | Obszar | Wymaganie |
@@ -262,6 +284,6 @@ Jako trenujący chcę otworzyć aplikację i od razu zacząć zaplanowany trenin
 | NFR-9 | Koszt | Infrastruktura mieści się w darmowych planach; koszt AI ograniczony limitem po stronie serwera |
 | NFR-10 | Niezawodność silnika | Reguły silnika pokryte testami jednostkowymi i scenariuszowymi; te same dane wejściowe zawsze dają tę samą receptę |
 | NFR-11 | Utrzymanie | Wdrożenie jedną komendą; migracje danych wersjonowane; brak ręcznych czynności okresowych |
-| NFR-12 | Zgodność | Aktualne wersje Safari na iOS i Chrome na Androidzie; Chrome, Safari i Firefox na komputerze |
+| NFR-12 | Zgodność | Platforma docelowa: Safari na iOS, aplikacja z ekranu głównego iPhone'a. Dodatkowo aktualne przeglądarki na komputerze |
 | NFR-13 | Odporność na konflikty | Edycja na dwóch urządzeniach offline nie powoduje utraty całych rekordów; wygrywa nowsza wersja pojedynczego dokumentu |
 | NFR-14 | Przejrzystość | Każda automatyczna zmiana recepty lub planu ma zapisany powód dostępny w interfejsie |

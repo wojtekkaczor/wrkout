@@ -7,7 +7,7 @@
 | Wpis ręczny | Nie | Zawsze dostępny | M2 |
 | Import pliku (FIT, GPX, TCX) | Nie, jedno dotknięcie na plik | Planowany; działa z każdym zegarkiem i aplikacją | M4 |
 | Garmin Personal API | Tak | Planowany jako główne źródło automatyczne; wymaga sprawdzenia na żywym kluczu | M4 |
-| Strava API | Tak | **Wstrzymana** z powodu zasad API (§6); decyzja należy do użytkownika | — |
+| Strava API | — | **Pominięta** decyzją użytkownika z 2026-11-24 (§6) | — |
 
 Każde źródło tworzy ten sam znormalizowany dokument `externalActivity` ([06 §4.6](06-model-danych.md#46-logi)). Reszta aplikacji nie wie, skąd pochodzi bieg, poza polem `source`.
 
@@ -71,6 +71,7 @@ sequenceDiagram
 - **Pierwsze połączenie:** import do 60 dni wstecz (o ile API na to pozwala) do oszacowania formy.
 - **Wygaśnięcie klucza:** przypomnienie w aplikacji 14 dni przed terminem; po terminie status „wygasła” i instrukcja wygenerowania nowego klucza.
 - **Błędy:** nieudane pobranie nie blokuje aplikacji; stan i data ostatniego udanego importu są widoczne w Profilu.
+- **Tylko odczyt:** Personal API nie pozwala wysyłać treningów na zegarek, więc plan nie trafia do Garmina. Recepty ogląda się w aplikacji.
 
 ### 3.3 Sprawdzenie przed budową (pierwsze zadanie M4)
 
@@ -81,6 +82,7 @@ Krótki eksperyment z prawdziwym kluczem użytkownika:
 3. Ustalić limity zapytań i zasięg historii.
 4. Przeczytać warunki Personal API: przechowywanie danych, użycie z AI, wymagane oznaczenia.
 5. Sprawdzić opóźnienie między końcem biegu a dostępnością aktywności w API.
+6. Sprawdzić, w jakiej postaci API zwraca treningi siłowe zarejestrowane zegarkiem (czas trwania, serie, powtórzenia, ciężary). Od tego zależy, czy da się z nich podpowiadać wpis (FR-INT-7).
 
 Wynik eksperymentu aktualizuje ten dokument. Jeśli API okaże się nieprzydatne, zostaje import pliku i wpis ręczny, a reszta aplikacji nie wymaga zmian.
 
@@ -128,15 +130,7 @@ Brak reakcji użytkownika niczego nie blokuje: bieg jest zaliczony, brakuje tylk
 
 Aplikacja treningowa potrzebuje trwałej historii biegów i przekazuje streszczenia do trenera AI. Obie rzeczy są sprzeczne z zasadami Stravy. Integracja zgodna z zasadami musiałaby usuwać dane po 7 dniach i wyłączać je z AI, co odbiera jej sens.
 
-**Decyzja:** integracja ze Stravą nie wchodzi do pierwszej wersji. Architektura jej nie wyklucza: to kolejny dostawca dokumentów `externalActivity`, z polem `source` sterującym ograniczeniami.
-
-### 6.3 Jeśli Strava jest jedynym źródłem danych
-
-Możliwości bez łamania zasad:
-
-1. **Eksport pliku ze Stravy** (GPX lub oryginał aktywności ze strony aktywności) i import pliku do aplikacji.
-2. **Wpis ręczny** z podglądu aktywności.
-3. **Tryb ograniczony przez API:** aktywność widoczna w aplikacji przez 7 dni jako podpowiedź do wpisu ręcznego, wyłączona z AI. Wymaga płatnej subskrypcji Stravy. Do rozważenia tylko na wyraźne życzenie.
+**Decyzja użytkownika (2026-11-24):** Stravę pomijamy; biegi przychodzą z Garmina. Architektura nie wyklucza powrotu do tematu: to kolejny dostawca dokumentów `externalActivity`, z polem `source` sterującym ograniczeniami.
 
 ## 7. Wymagania wobec każdej integracji
 

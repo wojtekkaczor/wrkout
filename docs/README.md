@@ -1,8 +1,8 @@
 # wrkout · dokumentacja
 
-Prywatna aplikacja do treningu hybrydowego: siłownia (sylwetka, ogólna sprawność) i bieganie. Sama układa plan, rozpisuje kolejne jednostki na podstawie celów, wyników i samopoczucia, a wszystko, co zaplanuje, można zmienić ręcznie.
+Prywatna aplikacja do treningu hybrydowego: siłownia (sylwetka, ogólna sprawność) i bieganie. Sama układa plan, rozpisuje kolejne jednostki na podstawie celów, wyników i samopoczucia, a wszystko, co zaplanuje, można zmienić ręcznie. Jest planerem i dziennikiem: służy do szybkiego wpisywania treningów, śledzenia progresu i raportów.
 
-Ten katalog to specyfikacja, na której opiera się budowa. Stan: **wersja 1, do akceptacji** (2026-11-17).
+Ten katalog to specyfikacja, na której opiera się budowa. Stan: **wersja 1.1** (2026-11-24), po decyzjach użytkownika: zegarek Garmin, bez Stravy, iPhone, bez timera przerw.
 
 ## Dokumenty
 
@@ -15,40 +15,50 @@ Ten katalog to specyfikacja, na której opiera się budowa. Stan: **wersja 1, do
 | 05 | [Architektura](05-architektura.md) | Z czego to jest zbudowane i dlaczego tak |
 | 06 | [Model danych i synchronizacja](06-model-danych.md) | Jakie dane, w jakim kształcie, jak trafiają do chmury |
 | 07 | [Trener AI](07-trener-ai.md) | Co robi AI, czego nie robi, ile kosztuje |
-| 08 | [Integracje](08-integracje.md) | Skąd biorą się biegi: Garmin, pliki, Strava |
+| 08 | [Integracje](08-integracje.md) | Skąd biorą się biegi: Garmin, pliki, wpis ręczny |
 | 09 | [Plan wdrożenia](09-plan-wdrozenia.md) | W jakiej kolejności budujemy i kiedy etap jest gotowy |
 
-Na szybki przegląd wystarczą dokumenty 01 i 09 oraz sekcje „Do potwierdzenia” i „Najważniejsze decyzje” poniżej. Dokument 03 warto przeczytać w całości, bo opisuje to, co aplikacja będzie Ci codziennie podpowiadać.
+Na szybki przegląd wystarczą dokumenty 01 i 09 oraz sekcje poniżej. Dokument 03 warto przeczytać w całości, bo opisuje to, co aplikacja będzie Ci codziennie podpowiadać.
 
 ## Najważniejsze decyzje
 
 | Decyzja | Wybór | Szczegóły |
 |---|---|---|
-| Forma aplikacji | PWA instalowana z przeglądarki | [05, ADR-1](05-architektura.md#15-rejestr-decyzji-adr) |
+| Rola aplikacji | Planer i dziennik: plan, szybki wpis, progres, raporty. Bez timera przerw i stopera; czas odmierza zegarek | [05, ADR-8](05-architektura.md#15-rejestr-decyzji-adr) |
+| Urządzenie | iPhone; PWA instalowana z Safari na ekranie głównym | [05 §9](05-architektura.md#9-pwa-mo%C5%BCliwo%C5%9Bci-i-ograniczenia) |
 | „Mózg” | Reguły na urządzeniu + opcjonalny trener AI | [03](03-silnik-treningowy.md), [07](07-trener-ai.md) |
 | Podział ról | Silnik liczy ciężary i tempa; AI proponuje strukturę; użytkownik zatwierdza | [05, ADR-5](05-architektura.md#15-rejestr-decyzji-adr) |
+| Wpisywanie | Na bieżąco albo po fakcie na tym samym ekranie; całe ćwiczenie lub cały trening „zgodnie z planem” jednym dotknięciem | [04 §3.3](04-ux-ui.md#33-sesja-si%C5%82owa) |
 | Dane | Lokalnie na urządzeniu, kopia i synchronizacja w chmurze | [06](06-model-danych.md) |
-| Hosting | Cloudflare Workers + D1 (zamiast Supabase) | [05, ADR-2](05-architektura.md#15-rejestr-decyzji-adr) |
+| Hosting | Cloudflare Workers + D1 | [05, ADR-2](05-architektura.md#15-rejestr-decyzji-adr) |
 | Logowanie | Jeden klucz dostępu, bez kont i haseł | [05, ADR-6](05-architektura.md#15-rejestr-decyzji-adr) |
-| Import biegów | Garmin Personal API + pliki + wpis ręczny; Strava wstrzymana | [08](08-integracje.md) |
+| Import biegów | Garmin Personal API + pliki + wpis ręczny; bez Stravy | [08](08-integracje.md) |
 | Model AI | `claude-opus-5-5`, z miesięcznym limitem kosztu | [07](07-trener-ai.md) |
-| Zakres MVP | M0 + M1 + M2: plan hybrydowy, logowanie, adaptacja | [09](09-plan-wdrozenia.md) |
+| Zakres MVP | M0 + M1 + M2: plan hybrydowy, wpisywanie, adaptacja, raporty | [09](09-plan-wdrozenia.md) |
 
-## Do potwierdzenia
+## Rozstrzygnięte przez użytkownika (2026-11-24)
 
-Decyzje, w których wybrano wariant domyślny. Każdą można zmienić przed startem budowy.
+| Kwestia | Decyzja |
+|---|---|
+| Zegarek | Garmin |
+| Strava | Pomijamy |
+| Telefon | iPhone |
+| Timer przerw, stoper | Niepotrzebne; robi to zegarek |
+| Główne zastosowanie | Śledzenie progresu, serii i powtórzeń; łatwe wpisywanie treningów; raporty |
 
-| # | Kwestia | Przyjęto | Dlaczego pytam |
+## Przyjęte domyślnie
+
+Wariant domyślny obowiązuje, dopóki nie zdecydujesz inaczej.
+
+| # | Kwestia | Przyjęto | Uwaga |
 |---|---|---|---|
-| 1 | **Strava** | Nie integrujemy w pierwszej wersji | Wybrałeś Stravę jako źródło, ale jej zasady API z 2026 roku zakazują trwałego przechowywania danych i użycia ich z AI. Szczegóły i warianty: [08 §6](08-integracje.md#6-strava) |
-| 2 | **Zegarek** | Garmin, dane przez nowe osobiste API Garmina | Jeśli masz inny zegarek, głównym źródłem będzie import plików |
-| 3 | **Hosting** | Cloudflare zamiast Supabase | W pytaniu padł przykład Supabase; Cloudflare lepiej pasuje do użytku prywatnego ([ADR-2](05-architektura.md#15-rejestr-decyzji-adr)) |
-| 4 | **Telefon** | iPhone lub Android | Na iPhonie ekran zawsze włączony wymaga iOS 18.4 lub nowszego; brak wibracji timera |
-| 5 | **Język** | Interfejs po polsku, jednostki kg i km | — |
-| 6 | **Kolejność** | Najpierw bieganie (M2), potem chmura (M3) | Można odwrócić, jeśli kopia w chmurze jest ważniejsza niż szybkie domknięcie planu hybrydowego |
-| 7 | **Blok** | 4 tygodnie pracy + 1 deload | Parametr; do zmiany w ustawieniach |
+| 1 | Hosting | Cloudflare zamiast Supabase | Darmowy projekt Supabase jest wstrzymywany po tygodniu bez aktywności ([ADR-2](05-architektura.md#15-rejestr-decyzji-adr)) |
+| 2 | Kolejność | Najpierw bieganie i raporty (M2), potem chmura (M3) | Do M3 dane są tylko na telefonie, z eksportem do pliku; kolejność można odwrócić |
+| 3 | „Raporty” | Krótki raport po treningu (wysiłek, notatka) oraz raporty postępów: tygodnia i bloku | Tak odczytałem „wpisywanie treningów i raportów”; inny zakres do dopisania |
+| 4 | Blok | 4 tygodnie pracy + 1 deload | Parametr w ustawieniach |
+| 5 | Język | Interfejs po polsku, kg i km | — |
 
-Zastrzeżenie do punktów 1 i 2: ustalenia o Stravie i Garminie pochodzą z wyciągów stron źródłowych z 2026-11-17 i będą potwierdzone na początku M4.
+Zastrzeżenie: ustalenia o osobistym API Garmina pochodzą z wyciągów stron źródłowych z 2026-11-17 i będą potwierdzone na żywym kluczu na początku M4. Planem zapasowym jest import plików.
 
 ## Słownik
 
@@ -60,6 +70,9 @@ Zastrzeżenie do punktów 1 i 2: ustalenia o Stravie i Garminie pochodzą z wyci
 | **Szkielet tygodnia** | Wzorzec tygodnia w bloku: jakie sesje, jakie ćwiczenia, ile serii |
 | **Slot** | Miejsce na ćwiczenie w sesji: ćwiczenie, liczba serii, zakres powtórzeń |
 | **Recepta** | Wyliczone liczby na konkretną sesję: ciężar, powtórzenia, tempo, dystans |
+| **Wpis po fakcie** | Wpisanie treningu po jego zakończeniu, z datą treningu |
+| **Raport z treningu** | Krótkie podsumowanie po sesji: wysiłek i notatka |
+| **Raport tygodnia / bloku** | Zestawienie wykonania, objętości, rekordów i kilometrażu, liczone na urządzeniu |
 | **Seria robocza** | Seria wliczana do objętości i progresji (w odróżnieniu od rozgrzewkowej) |
 | **RIR (zapas)** | Ile powtórzeń zostało „w zapasie” po serii |
 | **RPE (wysiłek)** | Odczuwany wysiłek w skali 1–10 |

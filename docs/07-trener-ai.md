@@ -31,7 +31,7 @@ Trzy bezpieczniki obowiązują zawsze:
 
 - **Kiedy:** po zamknięciu tygodnia, przy pierwszym otwarciu aplikacji z siecią; najwyżej raz na tydzień.
 - **Wyjście:** 3–5 zdań, do trzech mocnych stron, do trzech uwag, opcjonalnie do trzech drobnych zmian.
-- **Bez AI:** karta ze statystykami tygodnia liczonymi lokalnie.
+- **Bez AI:** raport tygodnia liczony lokalnie jest dostępny zawsze; AI dodaje do niego komentarz.
 
 ### 2.3 Polecenie do trenera
 
@@ -166,7 +166,6 @@ Tabela cen jest w konfiguracji Workera i wymaga aktualizacji przy zmianie modelu
 | Wpis ręczny | Tak |
 | Import pliku | Tak |
 | Garmin Personal API | Zależnie od warunków API; sprawdzenie jest zadaniem M4, przed uruchomieniem AI |
-| Strava | Nie. Zasady API Stravy zakazują użycia danych w aplikacjach AI ([08 §6](08-integracje.md#6-strava)) |
 
 Dla biegów ze źródła niedozwolonego AI dostaje tylko to, co wpisał użytkownik (RPE, ukończenie, notatka), oraz wartości planowane.
 

@@ -130,8 +130,6 @@ type Settings = {
   weekStart: Weekday                     // domyślnie 1
   theme: 'dark' | 'light' | 'system'
   increments: { barbell: number; dumbbell: number; machine: number; bodyweight: number }
-  restSec: { compoundMain: number; compoundAux: number; isolation: number }
-  timerSound: boolean
   blockWorkWeeks: number                 // 3–6
   ai: { enabled: boolean }
 }
@@ -162,7 +160,6 @@ type Exercise = {
 type ExercisePrefs = {
   exerciseId: string
   increment?: number
-  restSec?: number
   range?: [number, number]
   note?: string                          // np. ustawienie siedziska
 }
@@ -209,7 +206,6 @@ type Slot = {
   sets: number
   range: [number, number]
   rir?: number                           // nadpisanie docelowego RIR
-  restSec?: number
   locked?: boolean                       // ćwiczenie przypięte: silnik i AI go nie zamieniają
   edited?: boolean                       // parametry zmienione ręcznie
 }
@@ -234,8 +230,7 @@ type Week = {
   isDeload: boolean
   repeated?: boolean                     // powtórzenie poprzedniego numeru tygodnia
   plannedRunM: number
-  status: 'current' | 'closed'
-  closed?: { strengthDone: number; strengthPlanned: number; runDoneM: number; runPlannedM: number }
+  status: 'current' | 'closed'           // realizacja tygodnia jest wyliczana z sesji i logów
   layoutIssues?: string[]                // nieuniknione naruszenia reguł układu
 }
 
@@ -246,7 +241,7 @@ type PlannedSession = {
   kind: 'strength' | 'run'
   date: Day
   order: number                          // kolejność w dniu
-  status: 'planned' | 'in_progress' | 'done' | 'skipped'
+  status: 'planned' | 'in_progress' | 'done' | 'skipped'   // „skipped” można uzupełnić wpisem po fakcie
   skipReason?: string
   movedByUser?: boolean
   strength?: { name: string; focus: SessionFocus; slots: Slot[] }   // migawka; edytowalna „tylko ten tydzień”
@@ -291,9 +286,9 @@ type Pause = { from: Day; to: Day; reason?: 'vacation' | 'illness' | 'other' }
 ```ts
 type WorkoutLog = {
   plannedSessionId?: string
-  date: Day
-  startedAt: number
-  endedAt?: number
+  date: Day                              // dzień treningu; może być wcześniejszy niż dzień wpisu
+  loggedAt: number                       // chwila utworzenia wpisu
+  durationMin?: number                   // opcjonalnie; aplikacja nie mierzy czasu
   readinessId?: string
   context: { blockId?: string; weekIndex?: number; isDeload: boolean; readinessScore?: 1 | 2 | 3 | 4 | 5 }
   exercises: LoggedExercise[]
@@ -323,7 +318,6 @@ type LoggedSet = {
   durationSec?: number                   // ćwiczenia na czas
   rir?: number
   done: boolean
-  doneAt?: number
 }
 
 type RunLog = {
@@ -341,12 +335,12 @@ type RunLog = {
   rpe?: number
   completion?: 'as_planned' | 'shortened' | 'aborted'
   note?: string
-  source: 'manual' | 'garmin' | 'file' | 'strava'
+  source: 'manual' | 'garmin' | 'file'
   externalActivityId?: string
 }
 
 type ExternalActivity = {
-  provider: 'garmin' | 'file' | 'strava'
+  provider: 'garmin' | 'file'
   externalId: string
   sport: string
   startedAt: number
@@ -422,7 +416,7 @@ type PlanOp =
   | { op: 'slot.swap';      sessionId: string; slotId: string; exerciseId: string }
   | { op: 'slot.add';       sessionId: string; slot: Omit<Slot, 'id'>; position?: number }
   | { op: 'slot.remove';    sessionId: string; slotId: string }
-  | { op: 'slot.update';    sessionId: string; slotId: string; patch: Partial<Pick<Slot, 'sets' | 'range' | 'rir' | 'restSec' | 'locked'>> }
+  | { op: 'slot.update';    sessionId: string; slotId: string; patch: Partial<Pick<Slot, 'sets' | 'range' | 'rir' | 'locked'>> }
   | { op: 'slot.move';      sessionId: string; slotId: string; position: number }
   | { op: 'session.add';    template: SessionTemplate }
   | { op: 'session.remove'; sessionId: string }

@@ -9,6 +9,7 @@
 5. **Nic nie blokuje treningu.** Pytania (samopoczucie, RPE) można pominąć. Brak sieci, brak AI i brak akceptacji propozycji nie zatrzymują sesji.
 6. **Szczegóły na żądanie.** Uzasadnienia, historia i ustawienia ćwiczenia otwierają się w panelu dolnym, bez opuszczania sesji.
 7. **Spokojny interfejs.** Bez animacji ozdobnych, konfetti i powiadomień motywacyjnych. Rekord jest zaznaczony małym znacznikiem.
+8. **Dziennik, nie stoper.** Aplikacja nie ma timera przerw ani stopera; czas odmierza zegarek. Ten sam ekran służy do odhaczania serii między seriami i do wpisania całego treningu po fakcie.
 
 ## 2. Nawigacja
 
@@ -54,7 +55,7 @@ Warianty:
 
 - **Dwie sesje dziś:** dwie karty w kolejności zalecanej przez silnik.
 - **Dzień wolny:** „Dziś wolne” i karta najbliższej sesji z akcją „Zrób dziś”.
-- **Zaległa sesja:** mała karta nad główną: „Zaległe: Dół A (poniedziałek)” z akcjami „Zrób dziś” i „Pomiń”.
+- **Zaległa sesja:** mała karta nad główną: „Zaległe: Dół A (poniedziałek)” z akcjami „Wpisz” (trening już zrobiony), „Zrób dziś” i „Pomiń”.
 - **Sesja w toku:** karta zmienia się w „Kontynuuj · 3 z 7 ćwiczeń”.
 - **Zaimportowany bieg:** karta „Bieg 8,2 km · 45:10 · pasuje do: Bieg spokojny” z akcją „Potwierdź”.
 - **Propozycja do rozpatrzenia:** jeden wiersz „Propozycja kolejnego bloku” prowadzący do ekranu propozycji.
@@ -80,11 +81,13 @@ Pasek tygodnia: litera oznacza rodzaj (S = siła, B = bieg; dwie litery to dwie 
 
 Dotknięcie oceny 4 lub 5 od razu otwiera sesję. Przy ocenie 1–3 panel pokazuje, co się zmieni, z akcjami „Zastosuj”, „Trenuję normalnie” i „Przenieś trening”.
 
+Panel pojawia się tylko przy rozpoczynaniu dzisiejszej sesji. Przy wpisywaniu treningu po fakcie jest pomijany.
+
 ### 3.3 Sesja siłowa
 
 ```
 ┌────────────────────────────────┐
-│ ←  Góra A            24:10   ⋯ │
+│ ←  Góra A · dziś             ⋯ │
 │                                │
 │ 1  Wyciskanie na ławce       ⋯ │
 │    Ostatnio: 80 × 9, 9, 8      │
@@ -94,31 +97,31 @@ Dotknięcie oceny 4 lub 5 od razu otwiera sesję. Przy ocenie 1–3 panel pokazu
 │  │ 2  │ 80 kg  │  10   │  ✓  │ │
 │  │ 3  │ 80 kg  │  10   │  ○  │ │
 │  └────┴────────┴───────┴─────┘ │
-│  + seria                       │
+│  + seria      ✓ wszystkie serie│
 │                                │
 │ 2  Wiosłowanie sztangą       ⋯ │
 │    Ostatnio: 70 × 12, 11, 10   │
 │  ┌────┬────────┬───────┬─────┐ │
 │  │ 1  │ 70 kg  │  12   │  ○  │ │
 │  ...                           │
-│ ┌────────────────────────────┐ │
-│ │ Przerwa  1:42     +30 s  ✕ │ │
-│ └────────────────────────────┘ │
+│                                │
 │ [          ZAKOŃCZ           ] │
 └────────────────────────────────┘
 ```
 
 Zachowanie:
 
-- **Dotknięcie ○** zapisuje serię z widocznymi wartościami, zamienia znacznik na ✓ i uruchamia timer przerwy.
+- **Dotknięcie ○** zapisuje serię z widocznymi wartościami i zamienia znacznik na ✓.
+- **„✓ wszystkie serie”** odhacza całe ćwiczenie zgodnie z receptą.
+- **„Wszystko zgodnie z planem”**: przycisk pod nagłówkiem, widoczny, dopóki żadna seria nie jest odhaczona. Odhacza całą sesję; potem wystarczy poprawić serie, które poszły inaczej.
 - **Dotknięcie ciężaru lub powtórzeń** otwiera panel edycji serii (§3.4).
 - **Dotknięcie ✓** cofa odhaczenie.
 - **Menu ćwiczenia (⋯):** Zamień, Historia, Notatka, Ustawienia ćwiczenia, Usuń z sesji, Przesuń.
-- **Menu sesji (⋯):** Dodaj ćwiczenie, Zmień kolejność, Przerwij sesję.
+- **Menu sesji (⋯):** Zmień datę treningu, Dodaj ćwiczenie, Zmień kolejność, Odrzuć sesję.
 - **Kalibracja:** zamiast ciężaru pole „Dobierz” z podpowiedzią zakresu; po pierwszej serii pojawia się sugestia na kolejne.
 - Bieżące ćwiczenie jest rozwinięte, wykonane zwijają się do jednej linii z wynikiem.
-- Ekran nie gaśnie. Wyjście z sesji (←) niczego nie traci.
-- Timer jest przyklejony nad przyciskiem „Zakończ”; po upływie czasu sygnał dźwiękowy (i wibracja na Androidzie).
+- Wyjście z sesji (←) niczego nie traci; można wrócić za godzinę albo wieczorem.
+- Aplikacja nie odmierza przerw ani czasu treningu. Sesję można wypełniać na bieżąco między seriami albo w całości po treningu; nagłówek pokazuje datę treningu.
 
 ### 3.4 Edycja serii (panel dolny)
 
@@ -146,7 +149,7 @@ Dotknięcie liczby otwiera klawiaturę numeryczną. „Zapisz” odhacza serię.
 
 Lista zamienników posortowana według dopasowania: ta sama rola i partia, zgodny sprzęt, bez wykluczonych. Przy każdym wynik z ostatniego wykonania, jeśli istnieje. Na dole wyszukiwarka całej biblioteki i „Nowe ćwiczenie”. Po wyborze pytanie: **Tylko dziś** / **Na stałe w planie**.
 
-### 3.6 Zakończenie sesji
+### 3.6 Raport z treningu
 
 ```
 ┌────────────────────────────────┐
@@ -160,7 +163,7 @@ Lista zamienników posortowana według dopasowania: ta sama rola i partia, zgodn
 └────────────────────────────────┘
 ```
 
-Po zapisie krótkie podsumowanie: czas, liczba serii, rekordy, zapowiedź kolejnej sesji. Jedno dotknięcie wraca do „Dziś”.
+Po zapisie krótkie podsumowanie: liczba serii, rekordy, zmiana względem poprzedniego razu, zapowiedź kolejnej sesji. Jedno dotknięcie wraca do „Dziś”.
 
 ### 3.7 Sesja biegowa
 
@@ -259,15 +262,16 @@ Pole tekstowe „Co chcesz zmienić?” z przykładami podpowiedzi („Przenieś
 
 ### 3.12 Postępy
 
-Trzy sekcje wybierane segmentem u góry:
+Cztery sekcje wybierane segmentem u góry:
 
 - **Siła:** lista ćwiczeń z trendem e1RM (strzałka i wartość); dotknięcie otwiera wykres i wszystkie wykonania. Tygodniowe serie na partię.
 - **Bieganie:** kilometraż tygodniowy (słupki), tempo biegów spokojnych, VDOT w czasie, aktualne tempa treningowe.
-- **Historia:** chronologiczna lista sesji; dotknięcie otwiera szczegóły z możliwością edycji.
+- **Raporty:** raport tygodnia (wykonane względem planu, serie na partię, rekordy, kilometraż, zmiana względem poprzedniego tygodnia) i raport bloku. Z włączonym trenerem AI raport tygodnia ma dodatkowo krótki komentarz.
+- **Historia:** chronologiczna lista sesji; dotknięcie otwiera szczegóły z możliwością edycji. „Dodaj trening” pozwala wpisać sesję z dowolną datą.
 
 ### 3.13 Profil
 
-Lista sekcji: Cele · Dostępność · Sprzęt i skoki obciążenia · Ograniczenia · Biblioteka ćwiczeń · Import biegów (integracje) · Trener AI (włącznik, limit, zużycie) · Dane (eksport, import, usuwanie) · Ustawienia (jednostki, motyw, dźwięk, początek tygodnia) · O aplikacji (wersja, stan synchronizacji).
+Lista sekcji: Cele · Dostępność · Sprzęt i skoki obciążenia · Ograniczenia · Biblioteka ćwiczeń · Import biegów (integracje) · Trener AI (włącznik, limit, zużycie) · Dane (eksport, import, usuwanie) · Ustawienia (motyw, początek tygodnia) · O aplikacji (wersja, stan synchronizacji).
 
 ### 3.14 Onboarding
 
@@ -287,6 +291,8 @@ Sześć kroków, każdy mieści się na jednym ekranie, z paskiem postępu:
 | Start dzisiejszej sesji | Otwórz aplikację → Zacznij → (ocena samopoczucia) | 2 |
 | Seria zgodna z planem | ○ | 1 |
 | Seria z innym ciężarem | dotknij ciężaru → ± → Zapisz | 3 |
+| Całe ćwiczenie zgodnie z planem | ✓ wszystkie serie | 1 |
+| Cały trening po fakcie, zgodnie z planem | Wpisz → Wszystko zgodnie z planem → Zakończ → RPE → Zapisz | 5 |
 | Zamiana ćwiczenia | ⋯ → Zamień → wybór → Tylko dziś | 4 |
 | Zakończenie sesji | Zakończ → RPE → Zapisz | 3 |
 | Potwierdzenie zaimportowanego biegu | Potwierdź → RPE | 2 |
@@ -307,15 +313,15 @@ Sześć kroków, każdy mieści się na jednym ekranie, z paskiem postępu:
 
 ## 6. System wizualny
 
-- **Motyw:** ciemny domyślnie (siłownia, ekran stale włączony), jasny w ustawieniach. Kolory jako zmienne semantyczne: tło, powierzchnia, tekst, tekst drugorzędny, akcent, sukces, ostrzeżenie, błąd.
+- **Motyw:** ciemny domyślnie, jasny w ustawieniach. Kolory jako zmienne semantyczne: tło, powierzchnia, tekst, tekst drugorzędny, akcent, sukces, ostrzeżenie, błąd.
 - **Akcent:** jeden kolor dla głównej akcji na ekranie. Sukces (✓) ma osobny kolor. Stan nigdy nie jest przekazywany samym kolorem; zawsze towarzyszy mu ikona lub tekst.
-- **Typografia:** czcionka systemowa. Liczby tabelaryczne (równa szerokość cyfr) w seriach, timerze i tabelach. Skala: 28 px (ciężar i powtórzenia w edycji), 20 px (liczby w wierszu serii, tytuły), 16 px (tekst), 13 px (opisy).
+- **Typografia:** czcionka systemowa. Liczby tabelaryczne (równa szerokość cyfr) w seriach i tabelach. Skala: 28 px (ciężar i powtórzenia w edycji), 20 px (liczby w wierszu serii, tytuły), 16 px (tekst), 13 px (opisy).
 - **Siatka:** odstępy co 4 px; marginesy ekranu 16 px; wysokość wiersza serii 56 px.
 - **Ruch:** krótkie przejścia paneli (do 200 ms); wyłączone przy systemowym ograniczeniu animacji.
 - **Język:** polski, krótki, konkretny. Bez żargonu tam, gdzie jest polski odpowiednik („zapas” obok RIR, „wysiłek” obok RPE).
 - **Formaty:** przecinek dziesiętny (82,5 kg), tempo jako 5:16 /km, czas jako 45:10, daty po polsku.
 
-Komponenty bazowe: przycisk, karta, panel dolny, wiersz serii, krokowy selektor liczby (stepper), żeton wyboru (chip), pasek tygodnia, pasek timera, wiersz zmiany w propozycji, wykres liniowy i słupkowy, segment, baner.
+Komponenty bazowe: przycisk, karta, panel dolny, wiersz serii, krokowy selektor liczby (stepper), żeton wyboru (chip), pasek tygodnia, wiersz zmiany w propozycji, wykres liniowy i słupkowy, segment, baner.
 
 ## 7. Dostępność
 
