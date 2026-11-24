@@ -1,12 +1,67 @@
 # wrkout
 
-Prywatna aplikacja do treningu hybrydowego: siłownia i bieganie w jednym planie. Aplikacja sama programuje kolejne jednostki na podstawie celów, wyników i samopoczucia; wpisanie serii zajmuje jedno dotknięcie, a każdy element planu można zmienić ręcznie. Jest planerem i dziennikiem z raportami postępów; czas i przerwy odmierza zegarek.
+Prywatna aplikacja do treningu hybrydowego: siłownia i bieganie w jednym planie. Jest planerem i dziennikiem z raportami postępów; wpisanie serii zajmuje jedno dotknięcie, a czas i przerwy odmierza zegarek. Docelowo sama programuje kolejne jednostki na podstawie celów, wyników i samopoczucia.
 
-**Stan projektu:** specyfikacja w wersji 1.1; kod jeszcze nie powstał.
+## Stan projektu
+
+| Etap | Stan |
+|---|---|
+| Specyfikacja | Wersja 1.2 w [`docs/`](docs/README.md) |
+| M0 Fundament | Kod gotowy i przetestowany lokalnie; czeka na wdrożenie na Cloudflare i sprawdzenie na iPhonie |
+| M1 Dziennik | Następny |
+
+Kolejność: najpierw dziennik treningów i raporty postępów (M1), potem automatyczne programowanie (M2 siła, M3 bieganie i hybryda). Szczegóły w [planie wdrożenia](docs/09-plan-wdrozenia.md).
+
+## Uruchomienie
+
+Wymagania: Node 22 lub nowszy, pnpm 10.
+
+```bash
+pnpm install
+pnpm dev          # aplikacja i API pod jednym adresem, z odświeżaniem na żywo
+```
+
+| Komenda | Co robi |
+|---|---|
+| `pnpm dev` | Serwer deweloperski (Vite + lokalny Worker) |
+| `pnpm build` | Wersja produkcyjna w `dist/` |
+| `pnpm preview` | Podgląd wersji produkcyjnej, z service workerem |
+| `pnpm check` | Lint, typy i testy jednostkowe |
+| `pnpm test` | Testy jednostkowe (Vitest) |
+| `pnpm test:e2e` | Testy przeglądarkowe (Playwright) na wersji produkcyjnej |
+| `pnpm deploy` | Budowa i wdrożenie na Cloudflare |
+
+Testy przeglądarkowe wymagają jednorazowo `pnpm exec playwright install chromium`. Lokalnie działają w Chromium z ekranem iPhone'a; CI dodaje WebKit, czyli silnik Safari. Pracę offline na WebKit sprawdza się na prawdziwym iPhonie.
+
+## Wdrożenie
+
+Aplikacja to jeden Cloudflare Worker: serwuje pliki i obsługuje `/api/*`. Konfiguracja jest w `wrangler.jsonc`.
+
+**Automatycznie (zalecane).** W panelu Cloudflare: Workers & Pages → Create → Import a repository, wybierz to repozytorium. Polecenie budowania: `pnpm build`, polecenie wdrożenia: `npx wrangler deploy`. Każde wypchnięcie do gałęzi produkcyjnej wdraża nową wersję.
+
+**Ręcznie.** `pnpm deploy` z ustawionym `CLOUDFLARE_API_TOKEN` (uprawnienie do edycji Workers) albo po `pnpm exec wrangler login`.
+
+Adres aplikacji powinien pozostać stały od pierwszej instalacji na telefonie. Dane zainstalowanej aplikacji są przypisane do adresu, więc jego zmiana wymaga eksportu i importu danych.
+
+Po wdrożeniu: otwórz adres w Safari na iPhonie, wybierz Udostępnij → „Do ekranu początkowego” i uruchamiaj aplikację z ikony.
+
+## Struktura
+
+```
+src/
+  domain/     typy i schematy Zod wspólne dla aplikacji i API
+  data/       IndexedDB (Dexie), repozytoria dokumentów
+  ui/         komponenty bazowe i motyw
+  features/   ekrany: today, plan, progress, profile
+  app/        powłoka, routing, aktualizacje
+worker/       API (Hono) uruchamiane na Cloudflare
+tests/e2e/    testy przeglądarkowe
+docs/         specyfikacja
+```
+
+Granice między modułami pilnuje ESLint (`eslint.config.js`); opis w [architekturze](docs/05-architektura.md). Katalogi `src/engine` (silnik treningowy) i `src/catalog` (biblioteka ćwiczeń) powstaną w kolejnych etapach.
 
 ## Dokumentacja
-
-Pełna specyfikacja jest w katalogu [`docs/`](docs/README.md):
 
 - [Wizja i wymagania biznesowe](docs/01-wizja-i-wymagania-biznesowe.md)
 - [Wymagania funkcjonalne](docs/02-wymagania-funkcjonalne.md)
@@ -17,11 +72,3 @@ Pełna specyfikacja jest w katalogu [`docs/`](docs/README.md):
 - [Trener AI](docs/07-trener-ai.md)
 - [Integracje](docs/08-integracje.md)
 - [Plan wdrożenia](docs/09-plan-wdrozenia.md)
-
-## W skrócie
-
-- **Forma:** PWA (React, TypeScript), instalowana na iPhonie, działa offline.
-- **Biegi:** import z zegarka przez Garmin Personal API, z pliku albo ręcznie.
-- **Planowanie:** deterministyczny silnik reguł na urządzeniu; opcjonalny trener AI proponuje zmiany struktury planu.
-- **Dane:** lokalnie w IndexedDB, synchronizowane do Cloudflare D1.
-- **Serwer:** jeden Cloudflare Worker (pliki aplikacji, API, import biegów, pośrednik AI).

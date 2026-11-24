@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wrkout",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    // Unmatched paths serve index.html so client-side routes survive a reload.
+    "not_found_handling": "single-page-application",
+    // Only API requests reach the Worker; everything else is served as a static asset.
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": {
+    "enabled": true
+  }
+}

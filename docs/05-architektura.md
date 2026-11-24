@@ -195,7 +195,7 @@ Aktualizacje: service worker pobiera nową wersję w tle, a aplikacja pokazuje b
 
 | Środowisko | Opis |
 |---|---|
-| Lokalne | `pnpm dev`: Vite z Workerem i lokalnym D1 (Miniflare). Bez kont zewnętrznych; AI i import biegów zastąpione atrapami |
+| Lokalne | `pnpm dev`: Vite z Workerem (od M4 także z lokalnym D1). Bez kont zewnętrznych; AI i import biegów zastąpione atrapami |
 | Produkcja | Jeden Worker na Cloudflare: `pnpm deploy` buduje aplikację i wdraża ją razem z API. Adres `*.workers.dev` albo własna domena |
 
 Konfiguracja Workera: pliki statyczne z obsługą SPA (`not_found_handling: single-page-application`), API uruchamiane przed plikami dla `/api/*` (`run_worker_first`), powiązanie z D1, harmonogram zadań.
@@ -204,7 +204,7 @@ Sekrety produkcyjne: `ACCESS_KEY_HASH`, `SESSION_SECRET`, `ENCRYPTION_KEY`, `ANT
 
 Migracje D1 są wersjonowane w `migrations/` i stosowane komendą przy wdrożeniu.
 
-CI (GitHub Actions): lint, sprawdzenie typów, testy jednostkowe, testy Playwright na zbudowanej aplikacji. Wdrożenie produkcyjne uruchamiane ręcznie lub po scaleniu do głównej gałęzi (decyzja przy M0).
+CI (GitHub Actions): lint, sprawdzenie typów, testy jednostkowe, testy Playwright na zbudowanej aplikacji. Wdrożenie produkcyjne: automatycznie przez połączenie repozytorium z Cloudflare (wdrożenie po wypchnięciu do gałęzi produkcyjnej) albo ręcznie komendą `pnpm deploy`. Opis kroków w głównym README.
 
 ## 11. Kopie i odtwarzanie
 
@@ -224,7 +224,7 @@ Usunięcia są znacznikami (`deleted`), a dokumenty usunięte są czyszczone po 
 | Silnik | Każda reguła i scenariusze S1–S19 z [03 §14](03-silnik-treningowy.md#14-scenariusze-testowe); testy własności (np. recepta zawsze na siatce skoku, harmonogram nigdy nie łamie warunków twardych) | Vitest |
 | Dane | Repozytoria, migracje, eksport/import, klient synchronizacji na atrapie IndexedDB | Vitest |
 | API | Logowanie, sync (kolejność, konflikty, kursor), budżet AI, import na atrapie Garmina | Vitest w środowisku Workers |
-| Przepływy | Onboarding, pełna sesja offline, wpis po fakcie, wznowienie sesji, edycja planu, synchronizacja dwóch kontekstów przeglądarki | Playwright (WebKit, profil iPhone'a) |
+| Przepływy | Onboarding, pełna sesja offline, wpis po fakcie, wznowienie sesji, edycja planu, synchronizacja dwóch kontekstów przeglądarki | Playwright z ekranem iPhone'a: lokalnie Chromium, w CI dodatkowo WebKit; praca offline w Safari sprawdzana na prawdziwym iPhonie |
 | AI | Zestaw przykładowych kontekstów; odpowiedzi muszą przejść schemat i walidator | Skrypt uruchamiany ręcznie (koszt) |
 
 ## 13. Obserwowalność

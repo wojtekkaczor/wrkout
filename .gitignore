@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dev-dist/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+worker-configuration.d.ts
+test-results/
+playwright-report/
+coverage/
+.DS_Store
