@@ -168,7 +168,12 @@ type ExercisePrefs = {
 ### 4.3 Plan, blok, szkielet
 
 ```ts
-type Plan = { name: string; status: 'active' | 'archived'; startedAt: Day }
+type Plan = {
+  name: string
+  status: 'active' | 'archived'
+  startedAt: Day
+  mode: 'log' | 'programmed'             // 'log': tryb dziennika, bez tygodni i recept; 'programmed': silnik prowadzi plan
+}
 
 type Block = {
   planId: string
@@ -286,6 +291,7 @@ type Pause = { from: Day; to: Day; reason?: 'vacation' | 'illness' | 'other' }
 ```ts
 type WorkoutLog = {
   plannedSessionId?: string
+  templateId?: string                    // sesja z „Moich treningów” (tryb dziennika) lub szkieletu
   date: Day                              // dzień treningu; może być wcześniejszy niż dzień wpisu
   loggedAt: number                       // chwila utworzenia wpisu
   durationMin?: number                   // opcjonalnie; aplikacja nie mierzy czasu

@@ -157,7 +157,7 @@ Tabela cen jest w konfiguracji Workera i wymaga aktualizacji przy zmianie modelu
 - Do modelu trafia wyłącznie kontekst z §4: liczby treningowe, nazwy ćwiczeń, notatki z sesji. Bez imienia, adresu e-mail, lokalizacji i śladów GPS.
 - Klucz API jest sekretem Workera. Przeglądarka nigdy go nie widzi.
 - Serwer nie zapisuje treści zapytań ani odpowiedzi; zapisuje tylko liczniki zużycia. Treść rozmowy przechowuje aplikacja jako dokument `aiInteraction`.
-- Zasady przetwarzania danych przez dostawcę (retencja, brak użycia do trenowania modeli) wynikają z warunków API Anthropic; do potwierdzenia w aktualnych warunkach przy uruchamianiu M5.
+- Zasady przetwarzania danych przez dostawcę (retencja, brak użycia do trenowania modeli) wynikają z warunków API Anthropic; do potwierdzenia w aktualnych warunkach przy uruchamianiu M6.
 
 **Zasady per źródło danych biegowych.** Dostawcy danych mogą ograniczać użycie ich danych z AI, dlatego kontekst jest filtrowany według pola `source` biegu:
 
@@ -165,7 +165,7 @@ Tabela cen jest w konfiguracji Workera i wymaga aktualizacji przy zmianie modelu
 |---|---|
 | Wpis ręczny | Tak |
 | Import pliku | Tak |
-| Garmin Personal API | Zależnie od warunków API; sprawdzenie jest zadaniem M4, przed uruchomieniem AI |
+| Garmin Personal API | Zależnie od warunków API; sprawdzenie jest zadaniem M5, przed uruchomieniem AI |
 
 Dla biegów ze źródła niedozwolonego AI dostaje tylko to, co wpisał użytkownik (RPE, ukończenie, notatka), oraz wartości planowane.
 

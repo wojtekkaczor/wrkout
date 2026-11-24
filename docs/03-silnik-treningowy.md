@@ -11,6 +11,7 @@ Wszystkie liczby w tym dokumencie to **wartości startowe**. Znajdują się w je
 3. **Każda decyzja ma powód.** Wynik zawiera kod powodu i dane do wyjaśnienia (§12).
 4. **Podział ról.** Struktura planu (jakie sesje, jakie ćwiczenia, ile serii) zmienia się rzadko: na granicy bloku albo na życzenie użytkownika. Liczby (ciężar, powtórzenia, tempo, dystans) silnik wylicza na bieżąco.
 5. **Użytkownik ma pierwszeństwo.** Ręcznie zmienione elementy są oznaczone i silnik ich nie nadpisuje.
+6. **Tryb dziennika poprzedza programowanie.** Dopóki programowanie nie jest włączone, plan nie ma tygodni ani recept: użytkownik wybiera trening z „Moich treningów”, a pola serii wypełnia ostatni wynik. Po włączeniu programowania silnik przejmuje te sesje jako szkielet i liczy recepty z zebranej historii, więc ćwiczenia z historią nie wymagają kalibracji.
 
 ```mermaid
 flowchart LR

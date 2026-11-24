@@ -284,6 +284,18 @@ Sześć kroków, każdy mieści się na jednym ekranie, z paskiem postępu:
 5. **Ograniczenia:** bolesne obszary, wykluczone ćwiczenia (można pominąć).
 6. **Twój tydzień:** gotowy plan z akcjami „Zaczynamy” i „Popraw”.
 
+### 3.15 Tryb dziennika (M1)
+
+Do czasu włączenia programowania aplikacja działa jako dziennik. Różnice względem ekranów opisanych wyżej:
+
+- **Dziś** zamiast dzisiejszej sesji z planu pokazuje listę „Moich treningów” (z informacją, kiedy ostatnio wykonany) oraz przyciski „Bieg” i „Inny trening”. Jedno dotknięcie otwiera sesję do wpisania. Pod spodem skrót tygodnia: liczba treningów, kilometraż, rekordy.
+- **Plan** nazywa się w tym trybie **Treningi**: lista sesji do ułożenia i edycji (ćwiczenia, serie, zakresy). Start od gotowego szablonu podziału albo od pustej listy.
+- **Sesja:** pola serii wypełnia wynik z poprzedniego razu. „✓ wszystkie serie” i „Wszystko zgodnie z planem” znaczą „jak ostatnio”. Nie ma pytania o samopoczucie ani „Dlaczego?”.
+- **Postępy** działają w pełni: siła, bieganie (kilometraż, czas, tempo), raporty, historia, waga ciała.
+- Przy pierwszym uruchomieniu zamiast kreatora jest jeden ekran: „Wybierz szablon” albo „Ułóż własne treningi”.
+
+Przejście na programowanie (M2) nie zmienia sposobu wpisywania: te same ekrany dostają recepty i plan tygodnia.
+
 ## 4. Kluczowe przepływy
 
 | Przepływ | Kroki | Dotknięcia |

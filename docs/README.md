@@ -2,7 +2,7 @@
 
 Prywatna aplikacja do treningu hybrydowego: siłownia (sylwetka, ogólna sprawność) i bieganie. Sama układa plan, rozpisuje kolejne jednostki na podstawie celów, wyników i samopoczucia, a wszystko, co zaplanuje, można zmienić ręcznie. Jest planerem i dziennikiem: służy do szybkiego wpisywania treningów, śledzenia progresu i raportów.
 
-Ten katalog to specyfikacja, na której opiera się budowa. Stan: **wersja 1.1** (2026-11-24), po decyzjach użytkownika: zegarek Garmin, bez Stravy, iPhone, bez timera przerw.
+Ten katalog to specyfikacja, na której opiera się budowa. Stan: **wersja 1.2** (2026-11-24), po decyzjach użytkownika: zegarek Garmin, bez Stravy, iPhone, bez timera przerw, najpierw dziennik treningów, potem programowanie.
 
 ## Dokumenty
 
@@ -34,7 +34,7 @@ Na szybki przegląd wystarczą dokumenty 01 i 09 oraz sekcje poniżej. Dokument 
 | Logowanie | Jeden klucz dostępu, bez kont i haseł | [05, ADR-6](05-architektura.md#15-rejestr-decyzji-adr) |
 | Import biegów | Garmin Personal API + pliki + wpis ręczny; bez Stravy | [08](08-integracje.md) |
 | Model AI | `claude-opus-5-5`, z miesięcznym limitem kosztu | [07](07-trener-ai.md) |
-| Zakres MVP | M0 + M1 + M2: plan hybrydowy, wpisywanie, adaptacja, raporty | [09](09-plan-wdrozenia.md) |
+| Kolejność | Najpierw dziennik i raporty postępów (MVP = M0 + M1), potem automatyczne programowanie: siła w M2, bieganie i hybryda w M3 | [09](09-plan-wdrozenia.md) |
 
 ## Rozstrzygnięte przez użytkownika (2026-11-24)
 
@@ -44,7 +44,9 @@ Na szybki przegląd wystarczą dokumenty 01 i 09 oraz sekcje poniżej. Dokument 
 | Strava | Pomijamy |
 | Telefon | iPhone |
 | Timer przerw, stoper | Niepotrzebne; robi to zegarek |
-| Główne zastosowanie | Śledzenie progresu, serii i powtórzeń; łatwe wpisywanie treningów; raporty |
+| Główne zastosowanie | Śledzenie progresu, serii i powtórzeń; łatwe wpisywanie treningów; raporty postępów |
+| Kolejność | Najpierw śledzenie treningów, żeby zacząć korzystać; automatyczne programowanie jest obowiązkowe, ale w drugim kroku |
+| Raporty | Przede wszystkim raporty postępów |
 
 ## Przyjęte domyślnie
 
@@ -53,12 +55,12 @@ Wariant domyślny obowiązuje, dopóki nie zdecydujesz inaczej.
 | # | Kwestia | Przyjęto | Uwaga |
 |---|---|---|---|
 | 1 | Hosting | Cloudflare zamiast Supabase | Darmowy projekt Supabase jest wstrzymywany po tygodniu bez aktywności ([ADR-2](05-architektura.md#15-rejestr-decyzji-adr)) |
-| 2 | Kolejność | Najpierw bieganie i raporty (M2), potem chmura (M3) | Do M3 dane są tylko na telefonie, z eksportem do pliku; kolejność można odwrócić |
-| 3 | „Raporty” | Krótki raport po treningu (wysiłek, notatka) oraz raporty postępów: tygodnia i bloku | Tak odczytałem „wpisywanie treningów i raportów”; inny zakres do dopisania |
+| 2 | Chmura | Synchronizacja dopiero w M4, po programowaniu | Do M4 dane są tylko na telefonie, z eksportem do pliku i przypomnieniem o kopii; M4 można przesunąć wcześniej |
+| 3 | Treningi w M1 | Układasz własne sesje albo wybierasz gotowy szablon podziału | Silnik przejmie je w M2 razem z historią |
 | 4 | Blok | 4 tygodnie pracy + 1 deload | Parametr w ustawieniach |
 | 5 | Język | Interfejs po polsku, kg i km | — |
 
-Zastrzeżenie: ustalenia o osobistym API Garmina pochodzą z wyciągów stron źródłowych z 2026-11-17 i będą potwierdzone na żywym kluczu na początku M4. Planem zapasowym jest import plików.
+Zastrzeżenie: ustalenia o osobistym API Garmina pochodzą z wyciągów stron źródłowych z 2026-11-17 i będą potwierdzone na żywym kluczu na początku M5. Planem zapasowym jest import plików.
 
 ## Słownik
 
@@ -70,6 +72,8 @@ Zastrzeżenie: ustalenia o osobistym API Garmina pochodzą z wyciągów stron ź
 | **Szkielet tygodnia** | Wzorzec tygodnia w bloku: jakie sesje, jakie ćwiczenia, ile serii |
 | **Slot** | Miejsce na ćwiczenie w sesji: ćwiczenie, liczba serii, zakres powtórzeń |
 | **Recepta** | Wyliczone liczby na konkretną sesję: ciężar, powtórzenia, tempo, dystans |
+| **Tryb dziennika** | Etap przed programowaniem: sam wybierasz trening z „Moich treningów”, a pola serii wypełnia ostatni wynik |
+| **Moje treningi** | Lista sesji (ćwiczenia, serie, zakresy) ułożona ręcznie albo z szablonu |
 | **Wpis po fakcie** | Wpisanie treningu po jego zakończeniu, z datą treningu |
 | **Raport z treningu** | Krótkie podsumowanie po sesji: wysiłek i notatka |
 | **Raport tygodnia / bloku** | Zestawienie wykonania, objętości, rekordów i kilometrażu, liczone na urządzeniu |

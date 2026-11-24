@@ -25,4 +25,6 @@ Specyfikacja w `docs/` (start: `docs/README.md`). Przed zmianą zachowania aplik
 
 Platforma docelowa: iPhone, PWA z ekranu głównego. Aplikacja jest planerem i dziennikiem, nie stoperem: nie ma timera przerw ani stopera (robi to zegarek Garmin), a wpis na bieżąco i po fakcie to ten sam ekran. Historię porządkuje data treningu, nie data wpisu. Stravy nie integrujemy.
 
+Kolejność budowy: najpierw dziennik treningów i raporty postępów (M1, tryb dziennika), potem automatyczne programowanie (M2 siła, M3 bieganie i hybryda). Programowanie jest wymaganiem obowiązkowym, tylko późniejszym.
+
 Prostota ma pierwszeństwo: seria zgodna z planem to jedno dotknięcie, aplikacja działa offline, nic nie blokuje treningu. Nowa funkcja, która dodaje ekran lub decyzję przy każdym treningu, wymaga uzasadnienia (zob. `docs/01-wizja-i-wymagania-biznesowe.md` §7).

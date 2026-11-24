@@ -71,6 +71,14 @@ Jedna osoba: właściciel aplikacji.
 - Trener AI: propozycje kolejnego bloku, podsumowania tygodnia, zmiany planu na życzenie opisane zwykłym tekstem.
 - Synchronizacja między urządzeniami, kopia w chmurze, eksport i import.
 
+### Kolejność dostarczania
+
+1. **Dziennik (MVP):** wpisywanie treningów, historia, rekordy, raporty postępów. Od tego momentu aplikacja jest w codziennym użyciu.
+2. **Programowanie:** automatyczne recepty i plan dla siły, potem bieganie i układ hybrydowy. To wymaganie obowiązkowe produktu, dostarczane w drugim kroku.
+3. **Chmura, import z zegarka, trener AI.**
+
+Szczegóły w [planie wdrożenia](09-plan-wdrozenia.md).
+
 ### Poza zakresem
 
 | Poza zakresem | Powód |

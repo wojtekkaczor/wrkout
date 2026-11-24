@@ -4,16 +4,16 @@
 
 | Źródło | Automatyczne | Status | Kamień milowy |
 |---|---|---|---|
-| Wpis ręczny | Nie | Zawsze dostępny | M2 |
-| Import pliku (FIT, GPX, TCX) | Nie, jedno dotknięcie na plik | Planowany; działa z każdym zegarkiem i aplikacją | M4 |
-| Garmin Personal API | Tak | Planowany jako główne źródło automatyczne; wymaga sprawdzenia na żywym kluczu | M4 |
+| Wpis ręczny | Nie | Zawsze dostępny | M1 |
+| Import pliku (FIT, GPX, TCX) | Nie, jedno dotknięcie na plik | Planowany; działa z każdym zegarkiem i aplikacją | M5 |
+| Garmin Personal API | Tak | Planowany jako główne źródło automatyczne; wymaga sprawdzenia na żywym kluczu | M5 |
 | Strava API | — | **Pominięta** decyzją użytkownika z 2026-11-24 (§6) | — |
 
 Każde źródło tworzy ten sam znormalizowany dokument `externalActivity` ([06 §4.6](06-model-danych.md#46-logi)). Reszta aplikacji nie wie, skąd pochodzi bieg, poza polem `source`.
 
 ## 2. Stan wiedzy i zastrzeżenie
 
-Ustalenia z **2026-11-17**. Strony źródłowe Stravy i Garmina nie dały się pobrać w całości z tego środowiska, więc fakty pochodzą z wyciągów wyszukiwarki z oficjalnych stron i ze źródeł wtórnych. **Przed rozpoczęciem M4 trzeba je potwierdzić**, czytając strony podlinkowane w §8 i testując API własnym kluczem.
+Ustalenia z **2026-11-17**. Strony źródłowe Stravy i Garmina nie dały się pobrać w całości z tego środowiska, więc fakty pochodzą z wyciągów wyszukiwarki z oficjalnych stron i ze źródeł wtórnych. **Przed rozpoczęciem M5 trzeba je potwierdzić**, czytając strony podlinkowane w §8 i testując API własnym kluczem.
 
 Najważniejsze ustalenia:
 
@@ -73,7 +73,7 @@ sequenceDiagram
 - **Błędy:** nieudane pobranie nie blokuje aplikacji; stan i data ostatniego udanego importu są widoczne w Profilu.
 - **Tylko odczyt:** Personal API nie pozwala wysyłać treningów na zegarek, więc plan nie trafia do Garmina. Recepty ogląda się w aplikacji.
 
-### 3.3 Sprawdzenie przed budową (pierwsze zadanie M4)
+### 3.3 Sprawdzenie przed budową (pierwsze zadanie M5)
 
 Krótki eksperyment z prawdziwym kluczem użytkownika:
 
@@ -92,7 +92,7 @@ Wynik eksperymentu aktualizuje ten dokument. Jeśli API okaże się nieprzydatne
 - Plik jest przetwarzany na urządzeniu; nie jest wysyłany na serwer.
 - Wejście: wybór pliku w aplikacji albo „Udostępnij do aplikacji” tam, gdzie system to wspiera.
 - Z pliku powstaje `externalActivity` z `provider: 'file'` i identyfikatorem wyliczonym z czasu startu, dystansu i czasu trwania, więc ponowny import tego samego pliku nie tworzy duplikatu.
-- Parser FIT: oficjalny `@garmin/fitsdk` ma własną licencję (FIT Protocol License), którą trzeba przeczytać przed dołączeniem do aplikacji; alternatywą jest parser na licencji otwartej. Wybór w M4.
+- Parser FIT: oficjalny `@garmin/fitsdk` ma własną licencję (FIT Protocol License), którą trzeba przeczytać przed dołączeniem do aplikacji; alternatywą jest parser na licencji otwartej. Wybór w M5.
 - GPX i TCX to XML; przetwarzane wbudowanym parserem przeglądarki.
 - Kod importu jest ładowany dopiero przy pierwszym użyciu.
 
