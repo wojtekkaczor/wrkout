@@ -49,7 +49,8 @@ erDiagram
 | `settings` | 1 | `settings` | użytkownik |
 | `exercise` | własne ćwiczenia | UUID | użytkownik |
 | `exercisePrefs` | 0–1 na ćwiczenie | `pref:<exerciseId>` | użytkownik |
-| `plan` | 1 aktywny + archiwalne | UUID | silnik |
+| `workoutTemplate` | „Moje treningi”: 1 na sesję | UUID lub `tpl:<nazwa>` (import) | użytkownik / import |
+| `plan` | 1 aktywny + archiwalne (od M2) | UUID | silnik |
 | `block` | kilka na plan | UUID | silnik / propozycja |
 | `week` | 1 na tydzień kalendarzowy | `week:<poniedziałek>` | silnik |
 | `plannedSession` | sesje tygodnia | `ps:<poniedziałek>:<templateId>` | silnik |
@@ -140,20 +141,23 @@ type Settings = {
 Ćwiczenia wbudowane są w kodzie (`src/catalog`) i mają stałe identyfikatory tekstowe (np. `bench_press_barbell`). Dokument `exercise` opisuje tylko ćwiczenia własne. Kształt jest wspólny.
 
 ```ts
+type Tier = 'main' | 'supplementary' | 'accessory'      // główne / uzupełniające / dodatkowe
+
 type Exercise = {
   name: string
-  role: SlotRole
-  primary: MuscleGroup
-  secondary: MuscleGroup[]
-  kind: 'compound_main' | 'compound_aux' | 'isolation'
-  equipment: Equipment[]                 // wszystkie wymagane
+  tier: Tier                             // domyślna rola w sesji; slot może ją nadpisać
   measure: 'reps' | 'time'
-  load: 'external' | 'bodyweight' | 'assisted'
-  unilateral: boolean
-  stress: BodyArea[]                     // obszary, które ćwiczenie obciąża
-  fatigue: 1 | 2 | 3                     // koszt zmęczenia ogólnego
-  defaultRange: [number, number]
-  incrementKind: 'barbell' | 'dumbbell' | 'machine' | 'bodyweight'
+  load: 'external' | 'bodyweight' | 'assisted' | 'none'   // 'none': skoki, mobilność, guma
+  unilateral: boolean                    // powtórzenia i czas zapisywane na stronę
+  primary?: MuscleGroup                  // brak = nie liczy się do objętości (mobilność, plyometria)
+  secondary: MuscleGroup[]
+  // Pola potrzebne dopiero silnikowi (M2); w dzienniku opcjonalne:
+  role?: SlotRole
+  equipment?: Equipment[]
+  stress?: BodyArea[]                    // obszary, które ćwiczenie obciąża
+  fatigue?: 1 | 2 | 3                    // koszt zmęczenia ogólnego
+  defaultRange?: [number, number]
+  incrementKind?: 'barbell' | 'dumbbell' | 'machine' | 'bodyweight'
   hint?: string
 }
 
@@ -168,12 +172,17 @@ type ExercisePrefs = {
 ### 4.3 Plan, blok, szkielet
 
 ```ts
-type Plan = {
-  name: string
-  status: 'active' | 'archived'
-  startedAt: Day
-  mode: 'log' | 'programmed'             // 'log': tryb dziennika, bez tygodni i recept; 'programmed': silnik prowadzi plan
+/** „Moje treningi”: sesja do wyboru w trybie dziennika. Jeden dokument na sesję. */
+type WorkoutTemplate = {
+  name: string                           // 'Trening 1'
+  order: number
+  focus?: SessionFocus
+  slots: Slot[]
+  archived?: boolean
 }
+
+/** Plan prowadzony przez silnik (od M2). W trybie dziennika aktywnego planu nie ma. */
+type Plan = { name: string; status: 'active' | 'archived'; startedAt: Day }
 
 type Block = {
   planId: string
@@ -207,10 +216,12 @@ type StrengthTemplate = {
 type Slot = {
   id: string
   exerciseId: string
-  role: SlotRole
+  role?: SlotRole
+  tier?: Tier                            // nadpisanie roli ćwiczenia w tej sesji
   sets: number
-  range: [number, number]
-  rir?: number                           // nadpisanie docelowego RIR
+  range: [number, number]                // równe wartości = stała liczba powtórzeń (lub sekund)
+  rir?: number                           // docelowy RIR
+  tempo?: string                         // np. '3010'; 'xxxx' = dynamicznie
   locked?: boolean                       // ćwiczenie przypięte: silnik i AI go nie zamieniają
   edited?: boolean                       // parametry zmienione ręcznie
 }
@@ -292,11 +303,12 @@ type Pause = { from: Day; to: Day; reason?: 'vacation' | 'illness' | 'other' }
 type WorkoutLog = {
   plannedSessionId?: string
   templateId?: string                    // sesja z „Moich treningów” (tryb dziennika) lub szkieletu
+  title: string                          // nazwa sesji w chwili wpisu, np. 'Trening 1'
   date: Day                              // dzień treningu; może być wcześniejszy niż dzień wpisu
   loggedAt: number                       // chwila utworzenia wpisu
   durationMin?: number                   // opcjonalnie; aplikacja nie mierzy czasu
   readinessId?: string
-  context: { blockId?: string; weekIndex?: number; isDeload: boolean; readinessScore?: 1 | 2 | 3 | 4 | 5 }
+  context?: { label?: string; blockId?: string; weekIndex?: number; isDeload?: boolean; readinessScore?: 1 | 2 | 3 | 4 | 5 }
   exercises: LoggedExercise[]
   sessionRpe?: number
   note?: string
@@ -305,8 +317,11 @@ type WorkoutLog = {
 type LoggedExercise = {
   exerciseId: string
   slotId?: string
-  range: [number, number]
-  targetRir: number
+  tier?: Tier
+  range?: [number, number]
+  targetRir?: number
+  rir?: number                           // zapas podany raz dla ćwiczenia (zwykle ostatnia seria)
+  tempo?: string
   prescription?: {                       // migawka recepty z chwili otwarcia sesji
     weightKg?: number
     reps: number[]
@@ -319,10 +334,10 @@ type LoggedExercise = {
 
 type LoggedSet = {
   kind: 'work' | 'warmup' | 'drop'
-  weightKg: number                       // dla masy ciała: ciężar dodatkowy (ujemny przy odciążeniu)
-  reps?: number
+  weightKg?: number                      // brak = bez obciążenia lub niezapisany; dla masy ciała: ciężar dodatkowy
+  reps?: number                          // dla ćwiczeń jednostronnych: na stronę
   durationSec?: number                   // ćwiczenia na czas
-  rir?: number
+  rir?: number                           // opcjonalnie dla pojedynczej serii; nadpisuje wartość ćwiczenia
   done: boolean
 }
 
@@ -330,9 +345,11 @@ type RunLog = {
   plannedSessionId?: string
   date: Day
   startedAt?: number
-  runType: RunType
-  distanceM: number
-  movingSec: number
+  sport: 'run' | 'bike' | 'other'        // rower i inne liczą się do czasu, nie do kilometrażu biegowego
+  runType?: RunType
+  planned?: string                       // opis zadanej jednostki, tekstem
+  distanceM?: number
+  movingSec?: number
   elapsedSec?: number
   avgHr?: number
   maxHr?: number
@@ -342,6 +359,7 @@ type RunLog = {
   completion?: 'as_planned' | 'shortened' | 'aborted'
   note?: string
   source: 'manual' | 'garmin' | 'file'
+  url?: string                           // odnośnik do aktywności, np. w Garmin Connect
   externalActivityId?: string
 }
 
@@ -488,11 +506,12 @@ Jedna tabela na typ dokumentu; dokument przechowywany w całości. Indeksy tylko
 |---|---|
 | `singletons` (`profile`, `settings`) | `id` |
 | `exercises`, `exercisePrefs` | `id` |
+| `workoutTemplates` | `id` |
 | `plans`, `blocks` | `id`, `status` |
 | `weeks` | `id`, `startDate`, `status` |
 | `plannedSessions` | `id`, `weekId`, `date`, `status` |
-| `workoutLogs` | `id`, `date`, `plannedSessionId`, `*exerciseIds` (indeks wielowartościowy do historii ćwiczenia) |
-| `runLogs` | `id`, `date`, `plannedSessionId`, `externalActivityId` |
+| `workoutLogs` | `id`, `date` (historia ćwiczenia jest filtrowana w pamięci; przy setkach treningów to wystarcza) |
+| `runLogs` | `id`, `date` |
 | `externalActivities` | `id`, `status`, `startedAt` |
 | `readiness`, `fitnessEvents`, `bodyMetrics`, `pauses`, `planOverrides` | `id`, `date` lub `from` |
 | `proposals` | `id`, `status` |

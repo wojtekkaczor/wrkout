@@ -61,7 +61,8 @@ Baza D1 nie jest potrzebna przed M4 i dopiero wtedy zostanie podłączona.
 
 **Zakres**
 
-- Biblioteka ćwiczeń (około 120) i własne ćwiczenia; ustawienia ćwiczenia; notatki.
+- Import dotychczasowych wyników z arkusza użytkownika (treningi siłowe i biegi) wraz z jego ćwiczeniami i sesjami.
+- Ćwiczenia: lista z importu i własne; ustawienia ćwiczenia; notatki. Pełna biblioteka (około 120) dochodzi z programowaniem w M2.
 - „Moje treningi”: sesje układane ręcznie albo z gotowego szablonu podziału.
 - Ekran „Dziś” w trybie dziennika: wybór treningu do wpisania, bieg, trening dowolny.
 - Ekran sesji: serie wypełnione wynikiem z poprzedniego razu, odhaczanie serii, całego ćwiczenia i całej sesji, edycja serii, zamiana, dodanie i usunięcie ćwiczenia, wpis po fakcie z datą treningu, wznowienie przerwanej sesji, raport z treningu.
@@ -217,7 +218,7 @@ Lista do wyboru po kilku tygodniach używania:
 | Kiedy | Co | Koszt |
 |---|---|---|
 | Teraz | Dostęp Claude do repozytorium GitHub (instalacja aplikacji Claude na repozytorium) | 0 zł |
-| M0 | Konto Cloudflare; repozytorium połączone z Cloudflare albo token API | 0 zł |
+| M0 | Konto Cloudflare; repozytorium połączone z Cloudflare albo token API. Adres: darmowy `*.workers.dev`, bez własnej domeny (decyzja z 2026-11-24) | 0 zł |
 | M4 | Klucz dostępu do aplikacji (generowany skryptem) | — |
 | M5 | Klucz Garmin Personal API (konto Garmin Connect) | 0 zł |
 | M6 | Klucz API Anthropic z limitem wydatków | według zużycia, szacunkowo 1–3 USD / mies. |

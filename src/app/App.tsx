@@ -3,7 +3,9 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { requestPersistentStorage, useSettings } from '@/data'
 import { PlanScreen } from '@/features/plan/PlanScreen'
 import { ProfileScreen } from '@/features/profile/ProfileScreen'
+import { ExerciseScreen } from '@/features/progress/ExerciseScreen'
 import { ProgressScreen } from '@/features/progress/ProgressScreen'
+import { WorkoutScreen } from '@/features/progress/WorkoutScreen'
 import { TodayScreen } from '@/features/today/TodayScreen'
 import { PlanIcon, ProfileIcon, ProgressIcon, TabBar, TodayIcon, type TabItem } from '@/ui'
 import { applyTheme } from './theme'
@@ -45,6 +47,8 @@ export function App() {
             <Route path="/" element={<TodayScreen />} />
             <Route path="/plan" element={<PlanScreen />} />
             <Route path="/postepy" element={<ProgressScreen />} />
+            <Route path="/postepy/cwiczenie/:exerciseId" element={<ExerciseScreen />} />
+            <Route path="/postepy/trening/:logId" element={<WorkoutScreen />} />
             <Route path="/profil" element={<ProfileScreen />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

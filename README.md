@@ -8,7 +8,7 @@ Prywatna aplikacja do treningu hybrydowego: siłownia i bieganie w jednym planie
 |---|---|
 | Specyfikacja | Wersja 1.2 w [`docs/`](docs/README.md) |
 | M0 Fundament | Kod gotowy i przetestowany lokalnie; czeka na wdrożenie na Cloudflare i sprawdzenie na iPhonie |
-| M1 Dziennik | Następny |
+| M1 Dziennik | W toku. Gotowe: import dotychczasowych wyników, postępy (siła, bieganie, raport tygodnia, historia), eksport i import kopii. Następne: wpisywanie treningów i biegów, „Moje treningi” |
 
 Kolejność: najpierw dziennik treningów i raporty postępów (M1), potem automatyczne programowanie (M2 siła, M3 bieganie i hybryda). Szczegóły w [planie wdrożenia](docs/09-plan-wdrozenia.md).
 
@@ -31,6 +31,8 @@ pnpm dev          # aplikacja i API pod jednym adresem, z odświeżaniem na żyw
 | `pnpm test:e2e` | Testy przeglądarkowe (Playwright) na wersji produkcyjnej |
 | `pnpm deploy` | Budowa i wdrożenie na Cloudflare |
 
+`pnpm test:e2e` zawsze buduje świeżą wersję i wymaga wolnego portu 4173.
+
 Testy przeglądarkowe wymagają jednorazowo `pnpm exec playwright install chromium`. Lokalnie działają w Chromium z ekranem iPhone'a; CI dodaje WebKit, czyli silnik Safari. Pracę offline na WebKit sprawdza się na prawdziwym iPhonie.
 
 ## Wdrożenie
@@ -45,21 +47,33 @@ Adres aplikacji powinien pozostać stały od pierwszej instalacji na telefonie. 
 
 Po wdrożeniu: otwórz adres w Safari na iPhonie, wybierz Udostępnij → „Do ekranu początkowego” i uruchamiaj aplikację z ikony.
 
+## Import wyników z arkusza
+
+Dotychczasowe wyniki z arkusza (`dane`: treningi siłowe, `bieganie`: biegi) zamienia na plik kopii aplikacji skrypt:
+
+```bash
+python3 scripts/import-results/convert.py wyniki.xlsx wrkout-import.json
+```
+
+Plik wczytuje się w aplikacji: Profil → Importuj kopię. Konwersję można powtarzać po dopisaniu kolejnych treningów do arkusza: import dodaje tylko nowe wpisy i nie nadpisuje zmian zrobionych w aplikacji. Arkusz i plik kopii zawierają dane osobiste i nie należą do repozytorium.
+
 ## Struktura
 
 ```
 src/
   domain/     typy i schematy Zod wspólne dla aplikacji i API
-  data/       IndexedDB (Dexie), repozytoria dokumentów
+  engine/     czyste obliczenia: e1RM, historia ćwiczeń, rekordy, raport tygodnia
+  data/       IndexedDB (Dexie), repozytoria dokumentów, eksport i import
   ui/         komponenty bazowe i motyw
   features/   ekrany: today, plan, progress, profile
   app/        powłoka, routing, aktualizacje
 worker/       API (Hono) uruchamiane na Cloudflare
+scripts/      ikony, konwerter arkusza z wynikami
 tests/e2e/    testy przeglądarkowe
 docs/         specyfikacja
 ```
 
-Granice między modułami pilnuje ESLint (`eslint.config.js`); opis w [architekturze](docs/05-architektura.md). Katalogi `src/engine` (silnik treningowy) i `src/catalog` (biblioteka ćwiczeń) powstaną w kolejnych etapach.
+Granice między modułami pilnuje ESLint (`eslint.config.js`); opis w [architekturze](docs/05-architektura.md). Programowanie treningów w `src/engine` i biblioteka ćwiczeń w `src/catalog` powstaną w kolejnych etapach.
 
 ## Dokumentacja
 

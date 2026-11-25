@@ -6,6 +6,7 @@ export const DOC_TYPES = [
   'settings',
   'exercise',
   'exercisePrefs',
+  'workoutTemplate',
   'plan',
   'block',
   'week',

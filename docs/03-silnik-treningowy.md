@@ -145,6 +145,10 @@ Wszystkie serie robocze ćwiczenia mają ten sam ciężar. RIR jest podawany opc
 
 **Prognoza powtórzeń** na ciężarze `c` przy zapasie `RIR`: `powt = floor(30 × (e1RM / c − 1)) − RIR`.
 
+**Dwa zastosowania e1RM.** Silnik w receptach używa wzoru z RIR, bo potrzebuje oszacowania możliwości. Wykresy postępów i rekordy używają wersji bez RIR (`ciężar × (1 + powtórzenia / 30)`), czyli tylko tego, co faktycznie wykonano: ocena zapasu jest subiektywna i nie powinna zmieniać historii.
+
+**RIR na ćwiczenie.** Zapas podaje się raz dla ćwiczenia; silnik przyjmuje go dla wszystkich serii. Opcjonalny RIR pojedynczej serii ma pierwszeństwo.
+
 ### 5.2 Wykonanie referencyjne
 
 Ostatnie wykonanie tego samego ćwiczenia, które spełnia wszystkie warunki:

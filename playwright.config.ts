@@ -39,7 +39,8 @@ export default defineConfig({
   webServer: {
     command: `pnpm build && pnpm preview --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
-    reuseExistingServer: !isCI,
+    // Always build fresh: a server left over from an earlier run would serve a stale build.
+    reuseExistingServer: false,
     timeout: 180_000,
   },
 })

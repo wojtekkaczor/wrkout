@@ -47,6 +47,8 @@ Na szybki przegląd wystarczą dokumenty 01 i 09 oraz sekcje poniżej. Dokument 
 | Główne zastosowanie | Śledzenie progresu, serii i powtórzeń; łatwe wpisywanie treningów; raporty postępów |
 | Kolejność | Najpierw śledzenie treningów, żeby zacząć korzystać; automatyczne programowanie jest obowiązkowe, ale w drugim kroku |
 | Raporty | Przede wszystkim raporty postępów |
+| Adres aplikacji | Na razie darmowy `*.workers.dev`, bez własnej domeny |
+| Dotychczasowe wyniki | Arkusz z 13 tygodniami treningów i biegów; importowany do aplikacji jako historia i punkt wyjścia „Moich treningów” |
 
 ## Przyjęte domyślnie
 

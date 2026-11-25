@@ -47,7 +47,7 @@ Bez serwera aplikacja nadal działa w pełni na jednym urządzeniu. Serwer dodaj
 | Dane lokalne | IndexedDB przez Dexie + `dexie-react-hooks` | Reaktywne zapytania (`useLiveQuery`), indeksy, migracje wersji |
 | Walidacja i typy | Zod | Jedno źródło schematów dla klienta, serwera i odpowiedzi AI |
 | Offline | `vite-plugin-pwa` (Workbox) | Precache powłoki aplikacji, kontrolowana aktualizacja |
-| Wykresy | uPlot, ładowany leniwie | Kilkadziesiąt kB, szybki na telefonie |
+| Wykresy | Własne komponenty SVG | Kilka prostych wykresów (linia, słupki); bez zależności, zgodne z motywem |
 | Serwer | Cloudflare Workers + Hono | Jeden Worker serwuje pliki i API; brak wstrzymywania projektu; brak limitu czasu trwania żądania |
 | Baza w chmurze | Cloudflare D1 (SQLite) | Darmowy plan z zapasem, lokalna emulacja, odtwarzanie do punktu w czasie |
 | Narzędzia | pnpm, `@cloudflare/vite-plugin` 1.x, Wrangler 4.x | Worker i lokalne D1 działają wewnątrz `vite dev`, bez Dockera |

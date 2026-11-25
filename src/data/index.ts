@@ -1,5 +1,20 @@
-export { db, WrkoutDb, type StoredDoc, type SyncState } from './db'
+export { db, tableFor, WrkoutDb, type StoredDoc, type SyncState } from './db'
 export { DocRepo, NewerSchemaError, type DocRepoOptions } from './docRepo'
-export { useSettings } from './hooks'
+export {
+  useExercises,
+  useRunLogs,
+  useSettings,
+  useWorkoutLogs,
+  useWorkoutTemplates,
+} from './hooks'
 export { getStorageStatus, requestPersistentStorage, type StorageStatus } from './persistence'
+export { createRepos, repos, type Repos } from './repos'
 export { createSettingsRepo, loadSettings, updateSettings } from './settings'
+export {
+  EXPORT_FORMAT_VERSION,
+  ImportFileError,
+  exportAll,
+  importFile,
+  type ExportFile,
+  type ImportResult,
+} from './transfer'

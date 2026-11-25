@@ -145,6 +145,8 @@ Zachowanie:
 
 Dotknięcie liczby otwiera klawiaturę numeryczną. „Zapisz” odhacza serię. Krok ciężaru równa się skokowi obciążenia ćwiczenia.
 
+Zapas (RIR) podaje się raz dla ćwiczenia, pod ostatnią serią; w panelu serii jest opcjonalny. Tempo (np. 3010) jest pokazane przy nazwie ćwiczenia, jeśli sesja je zadaje. Serie jednego ćwiczenia mogą mieć różne ciężary. Ćwiczenia jednostronne pokazują powtórzenia „na stronę”, a ćwiczenia na czas sekundy zamiast powtórzeń.
+
 ### 3.5 Zamiana ćwiczenia (panel dolny)
 
 Lista zamienników posortowana według dopasowania: ta sama rola i partia, zgodny sprzęt, bez wykluczonych. Przy każdym wynik z ostatniego wykonania, jeśli istnieje. Na dole wyszukiwarka całej biblioteki i „Nowe ćwiczenie”. Po wyborze pytanie: **Tylko dziś** / **Na stałe w planie**.
