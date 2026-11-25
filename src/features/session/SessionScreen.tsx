@@ -4,6 +4,7 @@ import {
   deleteWorkout,
   saveWorkout,
   today,
+  useExercisePrefs,
   useExercises,
   useSettings,
   useWorkoutLog,
@@ -12,6 +13,7 @@ import {
 import { defaultSettings, type Exercise, type LoggedExercise, type WorkoutLog } from '@/domain'
 import { draftSets, exerciseHistory } from '@/engine'
 import { ExercisePicker } from '@/features/exercises/ExercisePicker'
+import { ExercisePrefsSheet } from '@/features/exercises/ExercisePrefsSheet'
 import { TIER_LABELS } from '@/features/exercises/labels'
 import {
   Button,
@@ -50,6 +52,7 @@ const RIR_CHOICES = [0, 1, 2, 3, 4].map((value) => ({
 type Panel =
   | { kind: 'set'; exercise: number; set: number }
   | { kind: 'exercise'; exercise: number }
+  | { kind: 'prefs'; exercise: number }
   | { kind: 'pick'; replace?: number }
   | { kind: 'menu' }
   | { kind: 'finish' }
@@ -67,6 +70,7 @@ export function SessionScreen() {
   const exerciseDocs = useExercises()
   const allLogs = useWorkoutLogs()
   const settings = useSettings() ?? defaultSettings
+  const prefs = useExercisePrefs()
   const [panel, setPanel] = useState<Panel>()
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -112,11 +116,13 @@ export function SessionScreen() {
     return logged
   }
 
-  const stepFor = (exercise: Exercise | undefined) =>
+  const defaultStep = (exercise: Exercise | undefined) =>
     settings.increments[exercise?.incrementKind ?? 'barbell']
 
   const active =
-    panel?.kind === 'set' || panel?.kind === 'exercise' ? log.exercises[panel.exercise] : undefined
+    panel?.kind === 'set' || panel?.kind === 'exercise' || panel?.kind === 'prefs'
+      ? log.exercises[panel.exercise]
+      : undefined
   const activeExercise = active ? exercises.get(active.exerciseId) : undefined
   const activeName = activeExercise?.name ?? 'Ćwiczenie'
 
@@ -140,6 +146,7 @@ export function SessionScreen() {
         const name = exercise?.name ?? 'Nieznane ćwiczenie'
         const timed = exercise?.measure === 'time'
         const last = exerciseHistory(earlier, logged.exerciseId).at(-1)
+        const note = prefs?.get(logged.exerciseId)?.note
         const traits = [
           logged.tier ? TIER_LABELS[logged.tier] : undefined,
           logged.tempo ? `tempo ${logged.tempo}` : undefined,
@@ -163,6 +170,9 @@ export function SessionScreen() {
                     ? `Ostatnio (${formatDay(last.date)}): ${describeSets(last.sets)}`
                     : 'Pierwszy raz: wpisz ciężar i powtórzenia'}
                 </p>
+                {note ? (
+                  <p className="text-[13px] [overflow-wrap:anywhere]">Notatka: {note}</p>
+                ) : null}
               </div>
               <button
                 type="button"
@@ -274,7 +284,7 @@ export function SessionScreen() {
           exerciseName={activeName}
           setNumber={panel.set + 1}
           set={active.sets[panel.set] ?? { kind: 'work', done: false }}
-          weightStep={stepFor(activeExercise)}
+          weightStep={prefs?.get(active.exerciseId)?.increment ?? defaultStep(activeExercise)}
           timed={activeExercise?.measure === 'time'}
           unilateral={activeExercise?.unilateral ?? false}
           onSave={(set, carryWeight) => {
@@ -321,6 +331,12 @@ export function SessionScreen() {
               Niżej
             </Button>
           </div>
+          <Button
+            variant="secondary"
+            onClick={() => setPanel({ kind: 'prefs', exercise: panel.exercise })}
+          >
+            Notatka i ustawienia
+          </Button>
           <Link
             to={`/postepy/cwiczenie/${encodeURIComponent(active.exerciseId)}`}
             className="flex min-h-12 items-center justify-center rounded-xl border border-border bg-surface-2 text-base font-semibold"
@@ -337,6 +353,17 @@ export function SessionScreen() {
             Usuń z treningu
           </Button>
         </Sheet>
+      ) : null}
+
+      {panel?.kind === 'prefs' && active ? (
+        <ExercisePrefsSheet
+          exerciseId={active.exerciseId}
+          exerciseName={activeName}
+          timed={activeExercise?.measure === 'time'}
+          prefs={prefs?.get(active.exerciseId)}
+          defaultIncrement={defaultStep(activeExercise)}
+          onClose={close}
+        />
       ) : null}
 
       {panel?.kind === 'pick' ? (

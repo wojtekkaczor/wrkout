@@ -518,6 +518,7 @@ Jedna tabela na typ dokumentu; dokument przechowywany w całości. Indeksy tylko
 | `proposals` | `id`, `status` |
 | `planChanges`, `aiInteractions` | `id`, `at` |
 | `syncState` | `cursor`, `lastSyncAt`, `deviceId` |
+| `localState` | `key`; wartości tylko dla tego urządzenia (np. czas ostatniego eksportu), poza synchronizacją i kopią |
 
 Każda tabela dokumentów ma dodatkowo indeks `dirty` (dokumenty do wysłania).
 

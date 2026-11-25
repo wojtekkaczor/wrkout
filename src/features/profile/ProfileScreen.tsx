@@ -3,6 +3,7 @@ import { getStorageStatus, updateSettings, useSettings, type StorageStatus } fro
 import type { Theme } from '@/domain'
 import { Card, Screen, Segmented, isStandalone } from '@/ui'
 import { DataCard } from './DataCard'
+import { TrainingSettingsCard } from './TrainingSettingsCard'
 
 const THEME_OPTIONS: { value: Theme; label: string }[] = [
   { value: 'dark', label: 'Ciemny' },
@@ -54,6 +55,7 @@ export function ProfileScreen() {
           onChange={(theme) => void updateSettings({ theme })}
         />
       </Card>
+      <TrainingSettingsCard />
       <DataCard />
       <Card title="Dane na urządzeniu">
         <p className="text-muted">{describeStorage(storage)}</p>

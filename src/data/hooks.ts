@@ -1,5 +1,15 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import type { Doc, Exercise, RunLog, Settings, WorkoutLog, WorkoutTemplate } from '@/domain'
+import type {
+  BodyMetric,
+  Doc,
+  Exercise,
+  ExercisePrefs,
+  RunLog,
+  Settings,
+  WorkoutLog,
+  WorkoutTemplate,
+} from '@/domain'
+import { getLastExportAt } from './backup'
 import { repos } from './repos'
 import { loadSettings } from './settings'
 
@@ -26,6 +36,27 @@ export function useWorkoutLogs(): Doc<WorkoutLog>[] | undefined {
 
 export function useRunLogs(): Doc<RunLog>[] | undefined {
   return useLiveQuery(() => repos.runLogs.list(), [])
+}
+
+/** Settings per exercise, keyed by exercise id. */
+export function useExercisePrefs(): Map<string, ExercisePrefs> | undefined {
+  return useLiveQuery(async () => {
+    const docs = await repos.exercisePrefs.list()
+    return new Map(docs.map((doc) => [doc.data.exerciseId, doc.data]))
+  }, [])
+}
+
+/** Body weight measurements, oldest first. */
+export function useBodyMetrics(): BodyMetric[] | undefined {
+  return useLiveQuery(async () => {
+    const docs = await repos.bodyMetrics.list()
+    return docs.map((doc) => doc.data).sort((a, b) => a.date.localeCompare(b.date))
+  }, [])
+}
+
+/** When the data was last exported from this device; `{}` if never. */
+export function useLastExport(): { at?: number } | undefined {
+  return useLiveQuery(async () => ({ at: await getLastExportAt() }), [])
 }
 
 /*

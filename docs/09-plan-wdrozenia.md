@@ -62,13 +62,14 @@ Baza D1 nie jest potrzebna przed M4 i dopiero wtedy zostanie podłączona.
 **Zakres**
 
 - Import dotychczasowych wyników z arkusza użytkownika (treningi siłowe i biegi) wraz z jego ćwiczeniami i sesjami.
-- Ćwiczenia: lista z importu i własne; ustawienia ćwiczenia; notatki. Pełna biblioteka (około 120) dochodzi z programowaniem w M2.
-- „Moje treningi”: sesje układane ręcznie albo z gotowego szablonu podziału.
+- Ćwiczenia: lista z importu, własne i około 25 wbudowanych, używanych przez gotowe zestawy; ustawienia ćwiczenia (notatka, skok ciężaru, zwykły zakres powtórzeń). Pełna biblioteka (około 120) dochodzi z programowaniem w M2.
+- „Moje treningi”: sesje układane ręcznie albo z gotowego zestawu (2, 3 lub 4 treningi w tygodniu).
+- Ustawienia: początek tygodnia w raportach, skoki ciężaru.
 - Ekran „Dziś” w trybie dziennika: wybór treningu do wpisania, bieg, trening dowolny.
 - Ekran sesji: serie wypełnione wynikiem z poprzedniego razu, odhaczanie serii, całego ćwiczenia i całej sesji, edycja serii, zamiana, dodanie i usunięcie ćwiczenia, wpis po fakcie z datą treningu, wznowienie przerwanej sesji, raport z treningu.
 - Ręczny wpis biegu: dystans, czas, RPE, typ.
 - Waga ciała.
-- Historia treningów, historia ćwiczenia, wykres e1RM, rekordy, dodanie i edycja treningu z dowolną datą.
+- Historia treningów, historia ćwiczenia, wykres e1RM, rekordy (także oznaczone w podsumowaniu treningu), dodanie i edycja treningu z dowolną datą.
 - Raporty: raport tygodnia (wykonane treningi, serie na partię, rekordy, kilometraż, zmiana względem poprzedniego tygodnia).
 - Eksport i import JSON; przypomnienie o kopii.
 

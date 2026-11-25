@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router'
+import { useSettings } from '@/data'
 import type { Doc, RunLog } from '@/domain'
 import { paceSecPerKm, weeklyRunTotals } from '@/engine'
 import {
@@ -60,6 +61,7 @@ export function RunEntry({ run }: { run: Doc<RunLog> }) {
 }
 
 export function RunningTab({ data }: { data: ProgressData }) {
+  const firstWeekday = useSettings()?.weekStart ?? 1
   const { weeks, sorted, totals } = useMemo(() => {
     const runsOnly = data.runs.filter((run) => run.data.sport === 'run')
     const distanceM = runsOnly.reduce((sum, run) => sum + (run.data.distanceM ?? 0), 0)
@@ -67,7 +69,7 @@ export function RunningTab({ data }: { data: ProgressData }) {
     const timedDistance = timed.reduce((sum, run) => sum + (run.data.distanceM ?? 0), 0)
     const timedSeconds = timed.reduce((sum, run) => sum + (run.data.movingSec ?? 0), 0)
     return {
-      weeks: weeklyRunTotals(data.runs),
+      weeks: weeklyRunTotals(data.runs, firstWeekday),
       sorted: [...data.runs].sort(
         (a, b) => b.data.date.localeCompare(a.data.date) || b.id.localeCompare(a.id),
       ),
@@ -77,7 +79,7 @@ export function RunningTab({ data }: { data: ProgressData }) {
         averagePace: paceSecPerKm(timedDistance, timedSeconds),
       },
     }
-  }, [data.runs])
+  }, [data.runs, firstWeekday])
 
   if (sorted.length === 0) {
     return (

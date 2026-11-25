@@ -15,8 +15,10 @@ export {
   progressMetric,
   sortLogs,
   summarizeExercises,
+  workoutRecords,
   type ExerciseSummary,
   type Performance,
   type ProgressMetric,
   type Records,
+  type WorkoutRecord,
 } from './strength/history'

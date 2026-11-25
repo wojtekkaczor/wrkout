@@ -26,46 +26,62 @@ export function HistoryTab({ data }: { data: ProgressData }) {
     return all.sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id))
   }, [data.logs, data.runs])
 
+  // A past workout is added like any other: start it, then set its date (FR-PROG-9).
+  const addLink = (
+    <Link
+      to="/"
+      className="flex min-h-12 items-center justify-center rounded-xl border border-border bg-surface-2 px-4 text-base font-semibold"
+    >
+      Dodaj trening lub bieg
+    </Link>
+  )
+
   if (entries.length === 0) {
     return (
-      <Card title="Brak wpisów">
-        <p className="text-muted">Tu pojawi się lista treningów i biegów.</p>
-      </Card>
+      <>
+        <Card title="Brak wpisów">
+          <p className="text-muted">Tu pojawi się lista treningów i biegów.</p>
+        </Card>
+        {addLink}
+      </>
     )
   }
 
   return (
-    <Card title={`Wpisy (${entries.length})`}>
-      <ul className="-my-1 divide-y divide-border">
-        {entries.map((entry) =>
-          entry.kind === 'run' ? (
-            <li key={entry.id}>
-              <RunEntry run={entry.run} />
-            </li>
-          ) : (
-            <li key={entry.id}>
-              <Link
-                to={`/postepy/trening/${encodeURIComponent(entry.id)}`}
-                className="block min-h-12 py-2"
-              >
-                <span className="flex items-baseline justify-between gap-3">
-                  <span className="text-base font-semibold">{entry.log.data.title}</span>
-                  <span className="shrink-0 text-[13px] text-muted">{formatDay(entry.date)}</span>
-                </span>
-                <span className="block text-[13px] text-muted">
-                  {[
-                    entry.log.data.context?.label,
-                    plural(entry.log.data.exercises.length, EXERCISES_FORMS),
-                    plural(countSets(entry.log.data), SETS_FORMS),
-                  ]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </span>
-              </Link>
-            </li>
-          ),
-        )}
-      </ul>
-    </Card>
+    <>
+      {addLink}
+      <Card title={`Wpisy (${entries.length})`}>
+        <ul className="-my-1 divide-y divide-border">
+          {entries.map((entry) =>
+            entry.kind === 'run' ? (
+              <li key={entry.id}>
+                <RunEntry run={entry.run} />
+              </li>
+            ) : (
+              <li key={entry.id}>
+                <Link
+                  to={`/postepy/trening/${encodeURIComponent(entry.id)}`}
+                  className="block min-h-12 py-2"
+                >
+                  <span className="flex items-baseline justify-between gap-3">
+                    <span className="text-base font-semibold">{entry.log.data.title}</span>
+                    <span className="shrink-0 text-[13px] text-muted">{formatDay(entry.date)}</span>
+                  </span>
+                  <span className="block text-[13px] text-muted">
+                    {[
+                      entry.log.data.context?.label,
+                      plural(entry.log.data.exercises.length, EXERCISES_FORMS),
+                      plural(countSets(entry.log.data), SETS_FORMS),
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </span>
+                </Link>
+              </li>
+            ),
+          )}
+        </ul>
+      </Card>
+    </>
   )
 }

@@ -92,6 +92,6 @@ test('works offline after the first visit', async ({ page, context, browserName 
   await page.reload()
 
   await expect(page.getByRole('heading', { level: 1, name: 'Dziś' })).toBeVisible()
-  await page.getByRole('link', { name: 'Profil' }).click()
+  await page.getByRole('link', { name: 'Profil', exact: true }).click()
   await expect(page.getByRole('heading', { level: 1, name: 'Profil' })).toBeVisible()
 })

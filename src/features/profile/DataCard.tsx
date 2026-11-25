@@ -4,12 +4,14 @@ import {
   db,
   exportAll,
   importFile,
+  markExported,
   useExercises,
+  useLastExport,
   useRunLogs,
   useWorkoutLogs,
   type ImportResult,
 } from '@/data'
-import { Button, Card } from '@/ui'
+import { Button, Card, formatDayLong } from '@/ui'
 
 function describeImport(result: ImportResult): string {
   const parts = [`dodano ${result.added}`, `zaktualizowano ${result.updated}`]
@@ -25,16 +27,17 @@ function describeImport(result: ImportResult): string {
   return `Import zakończony: ${parts.join(', ')}.`
 }
 
-async function saveFile(file: File): Promise<void> {
+/** Hands the file to the user. Returns false when they cancelled. */
+async function saveFile(file: File): Promise<boolean> {
   // On an iPhone the share sheet is the reliable way to keep a file
   // ("Zachowaj w Plikach"); elsewhere a normal download works.
   if (navigator.canShare?.({ files: [file] })) {
     try {
       await navigator.share({ files: [file], title: file.name })
-      return
+      return true
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
-        return
+        return false
       }
     }
   }
@@ -44,13 +47,15 @@ async function saveFile(file: File): Promise<void> {
   link.download = file.name
   link.click()
   URL.revokeObjectURL(url)
+  return true
 }
 
-/** Backup and restore of everything stored on the device (FR-SYNC-2). */
+/** Backup and restore of everything stored on the device (FR-SYNC-2, FR-SYNC-8). */
 export function DataCard() {
   const exercises = useExercises()
   const logs = useWorkoutLogs()
   const runs = useRunLogs()
+  const lastExport = useLastExport()
   const input = useRef<HTMLInputElement>(null)
   const [message, setMessage] = useState<string>()
   const [problems, setProblems] = useState<string[]>([])
@@ -65,9 +70,11 @@ export function DataCard() {
       const file = new File([JSON.stringify(backup)], `wrkout-kopia-${day}.json`, {
         type: 'application/json',
       })
-      await saveFile(file)
-      setMessage(`Kopia zawiera ${backup.docs.length} dokumentów.`)
-      setProblems([])
+      if (await saveFile(file)) {
+        await markExported(now)
+        setMessage(`Kopia zawiera ${backup.docs.length} dokumentów.`)
+        setProblems([])
+      }
     } finally {
       setBusy(false)
     }
@@ -102,6 +109,13 @@ export function DataCard() {
         Treningi: {logs?.length ?? '…'} · Biegi: {runs?.length ?? '…'} · Ćwiczenia:{' '}
         {exercises?.length ?? '…'}
       </p>
+      {lastExport ? (
+        <p className="text-muted">
+          {lastExport.at === undefined
+            ? 'Kopia zapasowa: jeszcze nie zrobiona.'
+            : `Ostatnia kopia: ${formatDayLong(new Date(lastExport.at).toISOString().slice(0, 10))}.`}
+        </p>
+      ) : null}
       <div className="mt-3 flex gap-2">
         <Button variant="secondary" className="flex-1" disabled={busy} onClick={() => void onExport()}>
           Eksportuj kopię
@@ -136,8 +150,9 @@ export function DataCard() {
         </ul>
       ) : null}
       <p className="mt-3 text-[13px] text-muted">
-        Import scala dane: przy tym samym dokumencie zostaje nowsza wersja, więc ten sam plik można
-        wczytać ponownie bez duplikatów.
+        Do czasu synchronizacji w chmurze jedyna kopia danych jest w tym telefonie, więc eksportuj
+        ją co tydzień. Import scala dane: przy tym samym dokumencie zostaje nowsza wersja, więc ten
+        sam plik można wczytać ponownie bez duplikatów.
       </p>
     </Card>
   )

@@ -131,6 +131,68 @@ export function exerciseRecords(history: Performance[]): Records {
   return records
 }
 
+export type WorkoutRecord = {
+  exerciseId: string
+  metric: ProgressMetric
+  value: number
+  /** The best value in any earlier workout. */
+  previous: number
+  weightKg?: number
+  reps?: number
+}
+
+function ownMetric(performance: Performance): ProgressMetric | undefined {
+  if (performance.bestE1rm) {
+    return 'e1rm'
+  }
+  if (performance.bestDurationSec !== undefined) {
+    return 'time'
+  }
+  return performance.bestReps !== undefined ? 'reps' : undefined
+}
+
+/**
+ * Exercises in one workout that beat every earlier workout: a higher
+ * estimated max, more reps without load, or a longer hold. The first time an
+ * exercise is logged sets the baseline and is not a record.
+ */
+export function workoutRecords(logs: Doc<WorkoutLog>[], logId: string): WorkoutRecord[] {
+  const sorted = sortLogs(logs)
+  const position = sorted.findIndex((log) => log.id === logId)
+  const target = sorted[position]
+  if (!target) {
+    return []
+  }
+  const earlier = sorted.slice(0, position)
+  const records: WorkoutRecord[] = []
+  const seen = new Set<string>()
+  for (const logged of target.data.exercises) {
+    const performance = toPerformance(target, logged)
+    const metric = performance ? ownMetric(performance) : undefined
+    if (!performance || !metric || seen.has(logged.exerciseId)) {
+      continue
+    }
+    seen.add(logged.exerciseId)
+    const value = metricValue(performance, metric)
+    const before = metricSeries(exerciseHistory(earlier, logged.exerciseId), metric)
+    if (value === undefined || before.length === 0) {
+      continue
+    }
+    const previous = Math.max(...before.map((point) => point.value))
+    if (value > previous) {
+      records.push({
+        exerciseId: logged.exerciseId,
+        metric,
+        value,
+        previous,
+        weightKg: performance.bestE1rm?.weightKg,
+        reps: metric === 'e1rm' ? performance.bestE1rm?.reps : performance.bestReps,
+      })
+    }
+  }
+  return records
+}
+
 function metricValue(performance: Performance, metric: ProgressMetric): number | undefined {
   if (metric === 'e1rm') {
     return performance.bestE1rm?.value

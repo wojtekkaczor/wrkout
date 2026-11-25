@@ -1,9 +1,30 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { deleteWorkout } from '@/data'
-import { Button, Card, Screen, describeSets, formatDayLong, formatNumber } from '@/ui'
+import { workoutRecords, type WorkoutRecord } from '@/engine'
+import {
+  Button,
+  Card,
+  Screen,
+  describeSets,
+  formatDayLong,
+  formatKg,
+  formatNumber,
+  formatWeight,
+} from '@/ui'
 import { TIER_LABELS } from './labels'
 import { useProgressData } from './useProgressData'
+
+function describeRecord(record: WorkoutRecord): string {
+  const gain = Math.round((record.value - record.previous) * 10) / 10
+  if (record.metric === 'e1rm' && record.weightKg !== undefined) {
+    const max = formatKg(Math.round(record.value * 2) / 2)
+    return `${formatWeight(record.weightKg)}×${record.reps} · e1RM ${max} (+${formatNumber(gain)} kg)`
+  }
+  return record.metric === 'time'
+    ? `${formatNumber(record.value)} s (+${formatNumber(gain)} s)`
+    : `${formatNumber(record.value)} powt. (+${formatNumber(gain)})`
+}
 
 /** One logged workout: every exercise with its sets. */
 export function WorkoutScreen() {
@@ -11,6 +32,7 @@ export function WorkoutScreen() {
   const navigate = useNavigate()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const data = useProgressData()
+  const records = useMemo(() => workoutRecords(data.logs, logId), [data.logs, logId])
   const log = data.logs.find((entry) => entry.id === logId)
   const back = { to: '/postepy?widok=historia', label: 'Historia' }
 
@@ -38,6 +60,20 @@ export function WorkoutScreen() {
             <p className="text-base">Wysiłek: {formatNumber(sessionRpe)} / 10</p>
           ) : null}
           {note ? <p className="text-muted">{note}</p> : null}
+        </Card>
+      ) : null}
+      {records.length > 0 ? (
+        <Card title="Rekordy w tym treningu">
+          <ul className="flex flex-col gap-2">
+            {records.map((record) => (
+              <li key={record.exerciseId}>
+                <span className="block text-base font-semibold [overflow-wrap:anywhere]">
+                  {data.exercises.get(record.exerciseId)?.name ?? 'Ćwiczenie'}
+                </span>
+                <span className="tabular block text-base">{describeRecord(record)}</span>
+              </li>
+            ))}
+          </ul>
         </Card>
       ) : null}
       <Card>

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router'
 import {
   deleteTemplate,
   saveTemplate,
+  useExercisePrefs,
   useExercises,
   useWorkoutTemplate,
   useWorkoutTemplates,
@@ -53,6 +54,7 @@ export function TemplateScreen() {
 function TemplateEditor({ templateId, initial }: { templateId?: string; initial: WorkoutTemplate }) {
   const navigate = useNavigate()
   const exerciseDocs = useExercises()
+  const prefs = useExercisePrefs()
   const [name, setName] = useState(initial.name)
   const [slots, setSlots] = useState<Slot[]>(initial.slots)
   const [picking, setPicking] = useState(false)
@@ -247,7 +249,7 @@ function TemplateEditor({ templateId, initial }: { templateId?: string; initial:
                 id: uuidv7(Date.now()),
                 exerciseId,
                 sets: 3,
-                range: isTimed ? [30, 30] : [8, 12],
+                range: prefs?.get(exerciseId)?.range ?? (isTimed ? [30, 30] : [8, 12]),
               },
             ])
             setPicking(false)

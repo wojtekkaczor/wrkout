@@ -11,6 +11,8 @@ export type SyncState = {
   deviceId: string
 }
 
+export type LocalState = { key: string; value: number | string }
+
 type DocTable = Table<StoredDoc, string>
 
 /**
@@ -24,7 +26,11 @@ export class WrkoutDb extends Dexie {
   workoutTemplates!: DocTable
   workoutLogs!: DocTable
   runLogs!: DocTable
+  exercisePrefs!: DocTable
+  bodyMetrics!: DocTable
   syncState!: Table<SyncState, string>
+  /** Values that belong to this device only: never synced, never exported. */
+  localState!: Table<LocalState, string>
 
   constructor(name = 'wrkout') {
     super(name)
@@ -38,6 +44,11 @@ export class WrkoutDb extends Dexie {
       workoutLogs: 'id, dirty, data.date',
       runLogs: 'id, dirty, data.date',
     })
+    this.version(3).stores({
+      exercisePrefs: 'id, dirty',
+      bodyMetrics: 'id, dirty, data.date',
+      localState: 'key',
+    })
   }
 }
 
@@ -47,6 +58,8 @@ const TABLE_BY_TYPE = {
   workoutTemplate: 'workoutTemplates',
   workoutLog: 'workoutLogs',
   runLog: 'runLogs',
+  exercisePrefs: 'exercisePrefs',
+  bodyMetric: 'bodyMetrics',
 } as const satisfies Record<SupportedDocType, keyof WrkoutDb>
 
 export function tableFor(database: WrkoutDb, type: SupportedDocType): DocTable {

@@ -11,6 +11,7 @@ import {
   summarizeExercises,
   weekReport,
   weekdayOf,
+  workoutRecords,
   weeklyRunTotals,
   weeksWithEntries,
 } from './index'
@@ -182,6 +183,49 @@ describe('exercise history', () => {
     expect(metricSeries(summaries.get('chin')?.history ?? [], 'reps')).toEqual([
       { date: '2026-09-03', value: 6 },
       { date: '2026-09-10', value: 8 },
+    ])
+  })
+})
+
+describe('workoutRecords', () => {
+  const logs = [
+    workout('w1', '2026-09-01', [
+      { exerciseId: 'bench', sets: [set(60, 8)] },
+      { exerciseId: 'chin', sets: [set(undefined, 6)] },
+      { exerciseId: 'plank', sets: [{ kind: 'work', done: true, durationSec: 30 }] },
+    ]),
+    workout('w2', '2026-09-08', [
+      { exerciseId: 'bench', sets: [set(62.5, 8), set(62.5, 7)] },
+      { exerciseId: 'chin', sets: [set(undefined, 6)] },
+      { exerciseId: 'plank', sets: [{ kind: 'work', done: true, durationSec: 45 }] },
+      { exerciseId: 'curl', sets: [set(12, 10)] },
+    ]),
+    workout('w3', '2026-09-15', [{ exerciseId: 'bench', sets: [set(60, 8)] }]),
+  ]
+
+  it('lists the exercises that beat every earlier workout', () => {
+    const records = workoutRecords(logs, 'w2')
+
+    expect(records.map((record) => [record.exerciseId, record.metric])).toEqual([
+      ['bench', 'e1rm'],
+      ['plank', 'time'],
+    ])
+    expect(records[0]).toMatchObject({ weightKg: 62.5, reps: 8 })
+    expect(records[0]?.previous).toBeCloseTo(76, 6)
+    expect(records[1]).toMatchObject({ value: 45, previous: 30 })
+  })
+
+  it('does not count a first-ever exercise, a tie or a weaker day', () => {
+    expect(workoutRecords(logs, 'w1')).toEqual([])
+    expect(workoutRecords(logs, 'w3')).toEqual([])
+    expect(workoutRecords(logs, 'missing')).toEqual([])
+  })
+
+  it('compares against earlier training dates even when entered later', () => {
+    const lateEntry = workout('late', '2026-08-25', [{ exerciseId: 'bench', sets: [set(70, 8)] }], 99)
+
+    expect(workoutRecords([...logs, lateEntry], 'w2').map((record) => record.exerciseId)).toEqual([
+      'plank',
     ])
   })
 })

@@ -142,6 +142,29 @@ describe('exportAll', () => {
   })
 })
 
+describe('all supported document types', () => {
+  it('carries exercise settings and body weight through a backup', async () => {
+    const repos = createRepos(database, () => 500)
+    await repos.exercisePrefs.put('pref:ex:bench', { exerciseId: 'ex:bench', increment: 1.25, note: 'Chwyt wąski' })
+    await repos.bodyMetrics.put('bm:2026-11-20', { date: '2026-11-20', weightKg: 82.4 })
+    await database.localState.put({ key: 'lastExportAt', value: 123 })
+
+    const file = await exportAll(database, 900)
+    const target = new WrkoutDb(`${database.name}-all-types`)
+    try {
+      await importFile(target, JSON.parse(JSON.stringify(file)))
+
+      expect(file.docs.map((doc) => doc.type).sort()).toEqual(['bodyMetric', 'exercisePrefs'])
+      expect((await createRepos(target).exercisePrefs.get('pref:ex:bench'))?.data.note).toBe('Chwyt wąski')
+      expect((await createRepos(target).bodyMetrics.get('bm:2026-11-20'))?.data.weightKg).toBe(82.4)
+      // Device-local state is not part of a backup.
+      expect(await target.localState.count()).toBe(0)
+    } finally {
+      await target.delete()
+    }
+  })
+})
+
 /*
  * Optional check for a converted spreadsheet (scripts/import-results):
  *   WRKOUT_IMPORT_FILE=/path/to/file.json pnpm test

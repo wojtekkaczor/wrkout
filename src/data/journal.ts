@@ -1,9 +1,14 @@
+import { CATALOG_EXERCISES, STARTER_SETS } from '@/catalog'
 import {
+  bodyMetricId,
+  exercisePrefsId,
   uuidv7,
   type Day,
   type Doc,
   type Exercise,
+  type ExercisePrefs,
   type RunLog,
+  type Slot,
   type WorkoutLog,
   type WorkoutTemplate,
 } from '@/domain'
@@ -88,4 +93,74 @@ export async function createExercise(data: Exercise): Promise<string> {
   const id = uuidv7(Date.now())
   await repos.exercises.put(id, data)
   return id
+}
+
+/** Saves the user's settings for one exercise; empty settings remove the document. */
+export async function saveExercisePrefs(
+  exerciseId: string,
+  prefs: Omit<ExercisePrefs, 'exerciseId'>,
+): Promise<void> {
+  const id = exercisePrefsId(exerciseId)
+  const data: ExercisePrefs = { exerciseId }
+  if (prefs.increment !== undefined) {
+    data.increment = prefs.increment
+  }
+  if (prefs.range) {
+    data.range = prefs.range
+  }
+  if (prefs.note?.trim()) {
+    data.note = prefs.note.trim()
+  }
+  if (Object.keys(data).length === 1) {
+    await repos.exercisePrefs.remove(id)
+    return
+  }
+  await repos.exercisePrefs.put(id, data)
+}
+
+/** One body weight per day; saving again for the same day replaces it. */
+export async function saveBodyWeight(date: Day, weightKg: number): Promise<void> {
+  await repos.bodyMetrics.put(bodyMetricId(date), { date, weightKg })
+}
+
+export async function deleteBodyWeight(date: Day): Promise<void> {
+  await repos.bodyMetrics.remove(bodyMetricId(date))
+}
+
+/**
+ * Adds a ready-made set of sessions to "Moje treningi". Catalogue exercises
+ * become ordinary exercise documents the first time they are needed, so they
+ * can be renamed or adjusted like any other.
+ */
+export async function addStarterSet(setId: string): Promise<number> {
+  const starter = STARTER_SETS.find((set) => set.id === setId)
+  if (!starter) {
+    throw new Error(`Unknown starter set: ${setId}`)
+  }
+  const now = Date.now()
+  const needed = new Set(
+    starter.sessions.flatMap((session) => session.slots.map((slot) => `cat:${slot.exercise}`)),
+  )
+  for (const { id, ...exercise } of CATALOG_EXERCISES) {
+    if (needed.has(id) && !(await repos.exercises.get(id))) {
+      await repos.exercises.put(id, exercise)
+    }
+  }
+  const existing = await repos.workoutTemplates.list()
+  let order = existing.reduce((highest, doc) => Math.max(highest, doc.data.order + 1), 0)
+  for (const [sessionIndex, session] of starter.sessions.entries()) {
+    const slots: Slot[] = session.slots.map((slot, slotIndex) => ({
+      id: uuidv7(now + sessionIndex * 100 + slotIndex),
+      exerciseId: `cat:${slot.exercise}`,
+      sets: slot.sets,
+      range: slot.range,
+    }))
+    await repos.workoutTemplates.put(uuidv7(now + sessionIndex), {
+      name: session.name,
+      order,
+      slots,
+    })
+    order += 1
+  }
+  return starter.sessions.length
 }

@@ -1,6 +1,8 @@
 import type { z } from 'zod'
+import { BODY_METRIC_SCHEMA_VERSION, bodyMetricSchema } from './bodyMetric'
 import type { DocType } from './doc'
 import { EXERCISE_SCHEMA_VERSION, exerciseSchema } from './exercise'
+import { EXERCISE_PREFS_SCHEMA_VERSION, exercisePrefsSchema } from './exercisePrefs'
 import { RUN_LOG_SCHEMA_VERSION, runLogSchema } from './runLog'
 import { SETTINGS_SCHEMA_VERSION, settingsSchema } from './settings'
 import { WORKOUT_LOG_SCHEMA_VERSION, workoutLogSchema } from './workoutLog'
@@ -16,9 +18,11 @@ export type DocSchema = { schema: z.ZodType; version: number }
 export const DOC_SCHEMAS = {
   settings: { schema: settingsSchema, version: SETTINGS_SCHEMA_VERSION },
   exercise: { schema: exerciseSchema, version: EXERCISE_SCHEMA_VERSION },
+  exercisePrefs: { schema: exercisePrefsSchema, version: EXERCISE_PREFS_SCHEMA_VERSION },
   workoutTemplate: { schema: workoutTemplateSchema, version: WORKOUT_TEMPLATE_SCHEMA_VERSION },
   workoutLog: { schema: workoutLogSchema, version: WORKOUT_LOG_SCHEMA_VERSION },
   runLog: { schema: runLogSchema, version: RUN_LOG_SCHEMA_VERSION },
+  bodyMetric: { schema: bodyMetricSchema, version: BODY_METRIC_SCHEMA_VERSION },
 } satisfies Partial<Record<DocType, DocSchema>>
 
 export type SupportedDocType = keyof typeof DOC_SCHEMAS

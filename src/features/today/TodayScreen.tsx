@@ -1,9 +1,18 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { startWorkout, today, useRunLogs, useWorkoutLogs, useWorkoutTemplates } from '@/data'
+import {
+  backupStatus,
+  startWorkout,
+  today,
+  useLastExport,
+  useRunLogs,
+  useSettings,
+  useWorkoutLogs,
+  useWorkoutTemplates,
+} from '@/data'
 import { startOfWeek } from '@/engine'
 import { countDone } from '@/features/session/edit'
-import { Button, Card, Screen, formatDay, formatDistance, isStandalone } from '@/ui'
+import { Button, Card, Screen, formatDay, formatDistance, isStandalone, plural } from '@/ui'
 
 const DATE_FORMAT = new Intl.DateTimeFormat('pl-PL', {
   weekday: 'long',
@@ -16,6 +25,8 @@ function formatToday(date: Date): string {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
+const DAYS_FORMS = ['dzień', 'dni', 'dni'] as const
+
 const linkButton =
   'flex min-h-12 items-center justify-center rounded-xl border border-border bg-surface-2 px-4 text-base font-semibold'
 
@@ -25,10 +36,13 @@ export function TodayScreen() {
   const templates = useWorkoutTemplates()
   const logs = useWorkoutLogs()
   const runs = useRunLogs()
+  const lastExport = useLastExport()
+  const firstWeekday = useSettings()?.weekStart ?? 1
   const [starting, setStarting] = useState(false)
+  const [now] = useState(() => Date.now())
 
-  const { inProgress, lastDone, week } = useMemo(() => {
-    const weekStart = startOfWeek(today())
+  const { inProgress, lastDone, week, entries } = useMemo(() => {
+    const weekStart = startOfWeek(today(), firstWeekday)
     const last = new Map<string, string>()
     let sessions = 0
     for (const log of logs ?? []) {
@@ -51,13 +65,19 @@ export function TodayScreen() {
         .filter((log) => log.data.status === 'in_progress')
         .sort((a, b) => b.data.loggedAt - a.data.loggedAt),
       lastDone: last,
+      entries: (logs ?? []).length + (runs ?? []).length,
       week: {
         sessions,
         runs: weekRuns.length,
         distanceM: weekRuns.reduce((sum, run) => sum + (run.data.distanceM ?? 0), 0),
       },
     }
-  }, [logs, runs])
+  }, [logs, runs, firstWeekday])
+
+  // Until cloud sync exists, the phone holds the only copy of the data.
+  const backup = lastExport
+    ? backupStatus({ lastExportAt: lastExport.at, now, entries })
+    : undefined
 
   const start = async (templateId?: string) => {
     setStarting(true)
@@ -139,6 +159,19 @@ export function TodayScreen() {
           </Link>
         </div>
       </Card>
+
+      {backup?.due ? (
+        <Card title="Zrób kopię danych">
+          <p className="text-muted">
+            {backup.daysSince === undefined
+              ? 'Twoje wpisy są tylko w tym telefonie i nie mają jeszcze kopii.'
+              : `Ostatnia kopia: ${plural(backup.daysSince, DAYS_FORMS)} temu.`}
+          </p>
+          <Link to="/profil" className={`${linkButton} mt-3`}>
+            Przejdź do kopii w Profilu
+          </Link>
+        </Card>
+      ) : null}
 
       <Card title="Ten tydzień">
         <p className="tabular text-base">

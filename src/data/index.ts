@@ -1,7 +1,17 @@
-export { db, tableFor, WrkoutDb, type StoredDoc, type SyncState } from './db'
+export {
+  BACKUP_INTERVAL_DAYS,
+  backupStatus,
+  getLastExportAt,
+  markExported,
+  type BackupStatus,
+} from './backup'
+export { db, tableFor, WrkoutDb, type LocalState, type StoredDoc, type SyncState } from './db'
 export { DocRepo, NewerSchemaError, type DocRepoOptions } from './docRepo'
 export {
+  useBodyMetrics,
+  useExercisePrefs,
   useExercises,
+  useLastExport,
   useRunLog,
   useRunLogs,
   useSettings,
@@ -11,11 +21,15 @@ export {
   useWorkoutTemplates,
 } from './hooks'
 export {
+  addStarterSet,
   createExercise,
+  deleteBodyWeight,
   deleteRun,
   deleteTemplate,
   deleteWorkout,
   finishedWorkoutLogs,
+  saveBodyWeight,
+  saveExercisePrefs,
   saveRun,
   saveTemplate,
   saveWorkout,

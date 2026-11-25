@@ -8,7 +8,8 @@ Prywatna aplikacja do treningu hybrydowego: siłownia i bieganie w jednym planie
 |---|---|
 | Specyfikacja | Wersja 1.2 w [`docs/`](docs/README.md) |
 | M0 Fundament | Kod gotowy i przetestowany lokalnie; czeka na wdrożenie na Cloudflare i sprawdzenie na iPhonie |
-| M1 Dziennik | Główna część gotowa: import wyników, „Moje treningi”, wpisywanie treningów (na bieżąco i po fakcie) i biegów, postępy, raport tygodnia, historia, eksport i import kopii. Zostało: gotowe szablony podziałów na start, waga ciała, notatki do ćwiczeń, przypomnienie o kopii, oznaczanie rekordów przy zapisie treningu |
+| M1 Dziennik | Gotowy w kodzie: import wyników, „Moje treningi” (własne i z gotowych zestawów), wpisywanie treningów i biegów, notatki i ustawienia ćwiczeń, waga ciała, postępy z rekordami, raport tygodnia, historia, kopia z przypomnieniem. Czeka na wdrożenie i sprawdzenie na iPhonie |
+| M2 Programowanie siły | Następny |
 
 Kolejność: najpierw dziennik treningów i raporty postępów (M1), potem automatyczne programowanie (M2 siła, M3 bieganie i hybryda). Szczegóły w [planie wdrożenia](docs/09-plan-wdrozenia.md).
 
@@ -65,6 +66,7 @@ src/
   engine/     czyste obliczenia: e1RM, historia ćwiczeń, rekordy, raport tygodnia, szkic sesji „jak ostatnio”
   data/       IndexedDB (Dexie), repozytoria dokumentów, eksport i import
   ui/         komponenty bazowe i motyw
+  catalog/    wbudowane ćwiczenia i gotowe zestawy treningów
   features/   ekrany: today, session, run, plan, exercises, progress, profile
   app/        powłoka, routing, aktualizacje
 worker/       API (Hono) uruchamiane na Cloudflare
@@ -73,7 +75,7 @@ tests/e2e/    testy przeglądarkowe
 docs/         specyfikacja
 ```
 
-Granice między modułami pilnuje ESLint (`eslint.config.js`); opis w [architekturze](docs/05-architektura.md). Programowanie treningów w `src/engine` i biblioteka ćwiczeń w `src/catalog` powstaną w kolejnych etapach.
+Granice między modułami pilnuje ESLint (`eslint.config.js`); opis w [architekturze](docs/05-architektura.md). Programowanie treningów w `src/engine` i pełna biblioteka ćwiczeń w `src/catalog` powstaną w kolejnych etapach.
 
 ## Dokumentacja
 

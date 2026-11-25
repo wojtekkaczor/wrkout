@@ -11,8 +11,20 @@ export {
   type MuscleGroup,
   type Tier,
 } from './common'
+export {
+  BODY_METRIC_SCHEMA_VERSION,
+  bodyMetricId,
+  bodyMetricSchema,
+  type BodyMetric,
+} from './bodyMetric'
 export { DOC_TYPES, docEnvelopeSchema, type Doc, type DocType } from './doc'
 export { EXERCISE_SCHEMA_VERSION, exerciseSchema, type Exercise } from './exercise'
+export {
+  EXERCISE_PREFS_SCHEMA_VERSION,
+  exercisePrefsId,
+  exercisePrefsSchema,
+  type ExercisePrefs,
+} from './exercisePrefs'
 export { uuidv7 } from './ids'
 export {
   DOC_SCHEMAS,

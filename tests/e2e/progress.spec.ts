@@ -85,7 +85,7 @@ test('opens a workout from the history', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1, name: 'Trening A' })).toBeVisible()
   await expect(page.getByText('czwartek, 10 września 2026')).toBeVisible()
   await expect(page.getByText('65 kg × 8, 8, 7')).toBeVisible()
-  await expect(page.getByText('8 powt.')).toBeVisible()
+  await expect(page.getByText('8 powt.', { exact: true })).toBeVisible()
 
   await page.getByRole('link', { name: '‹ Historia' }).click()
   await expect(page.getByText('Wpisy (6)')).toBeVisible()

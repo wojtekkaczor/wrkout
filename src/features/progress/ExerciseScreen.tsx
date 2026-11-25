@@ -1,5 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
+import { useExercisePrefs, useSettings } from '@/data'
+import { defaultSettings } from '@/domain'
 import {
   exerciseHistory,
   exerciseRecords,
@@ -7,7 +9,9 @@ import {
   progressMetric,
   type ProgressMetric,
 } from '@/engine'
+import { ExercisePrefsSheet } from '@/features/exercises/ExercisePrefsSheet'
 import {
+  Button,
   Card,
   LineChart,
   Screen,
@@ -31,6 +35,9 @@ export function ExerciseScreen() {
   const { exerciseId = '' } = useParams()
   const data = useProgressData()
   const exercise = data.exercises.get(exerciseId)
+  const prefs = useExercisePrefs()?.get(exerciseId)
+  const settings = useSettings() ?? defaultSettings
+  const [editing, setEditing] = useState(false)
 
   const { history, records, metric, series } = useMemo(() => {
     const performances = exerciseHistory(data.logs, exerciseId)
@@ -73,6 +80,17 @@ export function ExerciseScreen() {
             formatValue={(value) => formatMetric(metric, value)}
             description={`${METRIC_TITLES[metric]}: od ${formatMetric(metric, series[0]?.value ?? 0)} do ${formatMetric(metric, series.at(-1)?.value ?? 0)} w ${series.length} treningach`}
           />
+        </Card>
+      ) : null}
+
+      {exercise ? (
+        <Card title="Notatka">
+          <p className={prefs?.note ? 'text-base [overflow-wrap:anywhere]' : 'text-muted'}>
+            {prefs?.note ?? 'Brak notatki.'}
+          </p>
+          <Button variant="secondary" className="mt-3 w-full" onClick={() => setEditing(true)}>
+            Notatka i ustawienia
+          </Button>
         </Card>
       ) : null}
 
@@ -145,6 +163,16 @@ export function ExerciseScreen() {
           ))}
         </ul>
       </Card>
+      {editing && exercise ? (
+        <ExercisePrefsSheet
+          exerciseId={exerciseId}
+          exerciseName={exercise.name}
+          timed={exercise.measure === 'time'}
+          prefs={prefs}
+          defaultIncrement={settings.increments[exercise.incrementKind ?? 'barbell']}
+          onClose={() => setEditing(false)}
+        />
+      ) : null}
     </Screen>
   )
 }

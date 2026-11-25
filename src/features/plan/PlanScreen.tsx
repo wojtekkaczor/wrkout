@@ -1,21 +1,37 @@
+import { useState } from 'react'
 import { Link } from 'react-router'
-import { useWorkoutTemplates } from '@/data'
-import { Card, EXERCISES_FORMS, SETS_FORMS, Screen, plural } from '@/ui'
+import { STARTER_SETS } from '@/catalog'
+import { addStarterSet, useWorkoutTemplates } from '@/data'
+import { Button, Card, EXERCISES_FORMS, SETS_FORMS, Screen, Sheet, plural } from '@/ui'
+
+const SESSIONS_FORMS = ['trening', 'treningi', 'treningów'] as const
 
 /** "Moje treningi": the sessions the user picks from when logging (FR-PLAN-10). */
 export function PlanScreen() {
   const templates = useWorkoutTemplates()
+  const [choosing, setChoosing] = useState(false)
+  const [adding, setAdding] = useState(false)
   const sorted = [...(templates ?? [])].sort(
     (a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name, 'pl'),
   )
+
+  const add = async (setId: string) => {
+    setAdding(true)
+    try {
+      await addStarterSet(setId)
+      setChoosing(false)
+    } finally {
+      setAdding(false)
+    }
+  }
 
   return (
     <Screen title="Moje treningi" subtitle="Sesje, z których wybierasz trening do wpisania">
       {templates && sorted.length === 0 ? (
         <Card title="Brak treningów">
           <p className="text-muted">
-            Dodaj trening i ułóż w nim ćwiczenia. Potem wybierzesz go jednym dotknięciem na
-            ekranie Dziś, a serie wypełnią się wynikami z poprzedniego razu.
+            Ułóż własny trening albo zacznij od gotowego zestawu. Potem wybierzesz trening jednym
+            dotknięciem na ekranie Dziś, a serie wypełnią się wynikami z poprzedniego razu.
           </p>
         </Card>
       ) : null}
@@ -48,6 +64,38 @@ export function PlanScreen() {
       >
         Nowy trening
       </Link>
+      <Button variant="secondary" onClick={() => setChoosing(true)}>
+        Dodaj gotowy zestaw
+      </Button>
+
+      {choosing ? (
+        <Sheet title="Gotowe zestawy treningów" onClose={() => setChoosing(false)}>
+          <p className="text-[13px] text-muted">
+            Zestaw dodaje treningi do listy. Każdy możesz potem zmienić albo usunąć.
+          </p>
+          <ul className="flex flex-col gap-2">
+            {STARTER_SETS.map((set) => {
+              const exercises = set.sessions.reduce((total, session) => total + session.slots.length, 0)
+              return (
+                <li key={set.id}>
+                  <button
+                    type="button"
+                    disabled={adding}
+                    onClick={() => void add(set.id)}
+                    className="block min-h-14 w-full rounded-xl border border-border bg-surface-2 px-4 py-2 text-left disabled:opacity-50"
+                  >
+                    <span className="block text-base font-semibold">{set.name}</span>
+                    <span className="block text-[13px] text-muted">
+                      {set.description} · {plural(set.sessions.length, SESSIONS_FORMS)} ·{' '}
+                      {plural(exercises, EXERCISES_FORMS)}
+                    </span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </Sheet>
+      ) : null}
     </Screen>
   )
 }

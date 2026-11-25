@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
+import { useSettings } from '@/data'
 import { MUSCLE_GROUPS } from '@/domain'
 import { addDays, paceSecPerKm, weekReport, weeksWithEntries, type WeekReport } from '@/engine'
 import {
@@ -12,6 +13,7 @@ import {
   formatPace,
   formatWeight,
 } from '@/ui'
+import { BodyWeightCard } from './BodyWeightCard'
 import { MUSCLE_LABELS } from './labels'
 import type { ProgressData } from './useProgressData'
 
@@ -62,7 +64,11 @@ function MuscleSets({ report }: { report: WeekReport }) {
 
 /** Weekly report computed on the device from the logs (FR-PROG-8). */
 export function ReportsTab({ data }: { data: ProgressData }) {
-  const weeks = useMemo(() => weeksWithEntries(data.logs, data.runs), [data.logs, data.runs])
+  const firstWeekday = useSettings()?.weekStart ?? 1
+  const weeks = useMemo(
+    () => weeksWithEntries(data.logs, data.runs, firstWeekday),
+    [data.logs, data.runs, firstWeekday],
+  )
   const [selected, setSelected] = useState<string>()
   const weekStart = selected && weeks.includes(selected) ? selected : weeks[0]
 
@@ -79,9 +85,12 @@ export function ReportsTab({ data }: { data: ProgressData }) {
 
   if (!report || !previous || !weekStart) {
     return (
-      <Card title="Brak danych">
-        <p className="text-muted">Raport tygodnia pojawi się po pierwszym wpisanym treningu.</p>
-      </Card>
+      <>
+        <Card title="Brak danych">
+          <p className="text-muted">Raport tygodnia pojawi się po pierwszym wpisanym treningu.</p>
+        </Card>
+        <BodyWeightCard />
+      </>
     )
   }
 
@@ -180,6 +189,7 @@ export function ReportsTab({ data }: { data: ProgressData }) {
         )}
       </Card>
       <p className="text-[13px] text-muted">Zmiany podane względem poprzedniego tygodnia.</p>
+      <BodyWeightCard />
     </>
   )
 }
