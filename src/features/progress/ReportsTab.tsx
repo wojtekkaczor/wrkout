@@ -10,6 +10,7 @@ import {
   formatKg,
   formatNumber,
   formatPace,
+  formatWeight,
 } from '@/ui'
 import { MUSCLE_LABELS } from './labels'
 import type { ProgressData } from './useProgressData'
@@ -166,7 +167,7 @@ export function ReportsTab({ data }: { data: ProgressData }) {
                     {data.exercises.get(record.exerciseId)?.name ?? 'Ćwiczenie'}
                   </span>
                   <span className="tabular shrink-0 text-right text-base">
-                    {formatNumber(record.weightKg)}×{record.reps}
+                    {formatWeight(record.weightKg)}×{record.reps}
                     <span className="text-muted">
                       {' '}
                       (+{formatKg(Math.round((record.value - record.previous) * 10) / 10)})

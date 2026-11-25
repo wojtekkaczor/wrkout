@@ -1,103 +1,10 @@
-import { expect, test, type Page } from '@playwright/test'
-
-/** A small made-up backup: two exercises, three workouts over two weeks, three cardio entries. */
-function backupFile() {
-  const doc = (id: string, type: string, updatedAt: number, data: unknown) => ({
-    id,
-    type,
-    updatedAt,
-    schemaVersion: 1,
-    data,
-  })
-  const set = (weightKg: number | undefined, reps: number) => ({
-    kind: 'work',
-    done: true,
-    reps,
-    ...(weightKg === undefined ? {} : { weightKg }),
-  })
-  const workout = (id: string, date: string, benchKg: number, chinReps: number) =>
-    doc(id, 'workoutLog', 1, {
-      title: 'Trening A',
-      date,
-      loggedAt: 1,
-      context: { label: 'Blok testowy · Tydzień 1' },
-      exercises: [
-        {
-          exerciseId: 'ex:bench',
-          tier: 'main',
-          rir: 2,
-          tempo: '3010',
-          sets: [set(benchKg, 8), set(benchKg, 8), set(benchKg, 7)],
-        },
-        { exerciseId: 'ex:chin', tier: 'supplementary', sets: [set(undefined, chinReps)] },
-      ],
-    })
-
-  return {
-    app: 'wrkout',
-    exportedAt: 1,
-    formatVersion: 1,
-    docs: [
-      doc('ex:bench', 'exercise', 1, {
-        name: 'Wyciskanie testowe',
-        tier: 'main',
-        measure: 'reps',
-        load: 'external',
-        unilateral: false,
-        primary: 'chest',
-        secondary: ['triceps'],
-      }),
-      doc('ex:chin', 'exercise', 1, {
-        name: 'Podciąganie testowe',
-        tier: 'supplementary',
-        measure: 'reps',
-        load: 'bodyweight',
-        unilateral: false,
-        primary: 'back',
-        secondary: ['biceps'],
-      }),
-      workout('wl:1', '2026-09-01', 60, 6),
-      workout('wl:2', '2026-09-08', 62.5, 7),
-      workout('wl:3', '2026-09-10', 65, 8),
-      doc('run:1', 'runLog', 1, {
-        date: '2026-09-02',
-        sport: 'run',
-        runType: 'easy',
-        source: 'manual',
-        distanceM: 6000,
-        movingSec: 2400,
-        rpe: 4,
-      }),
-      doc('run:2', 'runLog', 1, {
-        date: '2026-09-09',
-        sport: 'run',
-        runType: 'intervals',
-        source: 'manual',
-        distanceM: 8000,
-        movingSec: 3000,
-        planned: '2 km spokojnie + 3x1000 m',
-        note: 'Mocne nogi',
-      }),
-      doc('run:3', 'runLog', 1, { date: '2026-09-11', sport: 'bike', source: 'manual', movingSec: 3300 }),
-      { id: 'broken', type: 'exercise', updatedAt: 1, schemaVersion: 1, data: { name: '' } },
-    ],
-  }
-}
-
-async function importBackup(page: Page) {
-  await page.goto('/profil')
-  await page.getByLabel('Plik kopii do importu').setInputFiles({
-    name: 'kopia.json',
-    mimeType: 'application/json',
-    buffer: Buffer.from(JSON.stringify(backupFile())),
-  })
-  await expect(page.getByRole('status')).toContainText('Import zakończony')
-}
+import { expect, test } from '@playwright/test'
+import { importBackup } from './fixtures'
 
 test('imports a backup and reports what was rejected', async ({ page }) => {
   await importBackup(page)
 
-  await expect(page.getByRole('status')).toContainText('dodano 8')
+  await expect(page.getByRole('status')).toContainText('dodano 9')
   await expect(page.getByRole('status')).toContainText('odrzucono 1')
   await expect(page.getByText('Treningi: 3 · Biegi: 3 · Ćwiczenia: 2')).toBeVisible()
 })
@@ -192,5 +99,5 @@ test('exports a backup that contains the imported documents', async ({ page }) =
   const file = await download
 
   expect(file.suggestedFilename()).toMatch(/^wrkout-kopia-\d{4}-\d{2}-\d{2}\.json$/)
-  await expect(page.getByRole('status')).toContainText('Kopia zawiera 8 dokumentów')
+  await expect(page.getByRole('status')).toContainText('Kopia zawiera 9 dokumentów')
 })

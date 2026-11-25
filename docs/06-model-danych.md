@@ -304,6 +304,7 @@ type WorkoutLog = {
   plannedSessionId?: string
   templateId?: string                    // sesja z „Moich treningów” (tryb dziennika) lub szkieletu
   title: string                          // nazwa sesji w chwili wpisu, np. 'Trening 1'
+  status: 'in_progress' | 'done'         // w trakcie wpisywania / zakończony; historia i raporty liczą tylko zakończone
   date: Day                              // dzień treningu; może być wcześniejszy niż dzień wpisu
   loggedAt: number                       // chwila utworzenia wpisu
   durationMin?: number                   // opcjonalnie; aplikacja nie mierzy czasu

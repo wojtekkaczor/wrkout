@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  SETS_FORMS,
   describeSets,
   formatDay,
   formatDayLong,
@@ -8,6 +9,7 @@ import {
   formatDuration,
   formatKg,
   formatPace,
+  plural,
 } from './format'
 
 // Intl output uses non-breaking spaces in places; compare on plain spaces.
@@ -17,6 +19,7 @@ describe('formatting', () => {
   it('uses a decimal comma for weights and distances', () => {
     expect(plain(formatKg(82.5))).toBe('82,5 kg')
     expect(plain(formatKg(80))).toBe('80 kg')
+    expect(plain(formatKg(66.25))).toBe('66,25 kg')
     expect(plain(formatDistance(5980))).toBe('5,98 km')
   })
 
@@ -34,6 +37,23 @@ describe('formatting', () => {
   it('shortens a range within one month', () => {
     expect(plain(formatDayRange('2026-09-07', '2026-09-13'))).toBe('7–13 września')
     expect(plain(formatDayRange('2026-08-31', '2026-09-06'))).toBe('31 sierpnia – 6 września')
+  })
+})
+
+describe('plural', () => {
+  it('picks the Polish form for the number', () => {
+    expect([1, 2, 4, 5, 12, 14, 21, 22, 25, 112].map((count) => plural(count, SETS_FORMS))).toEqual([
+      '1 seria',
+      '2 serie',
+      '4 serie',
+      '5 serii',
+      '12 serii',
+      '14 serii',
+      '21 serii',
+      '22 serie',
+      '25 serii',
+      '112 serii',
+    ])
   })
 })
 

@@ -27,3 +27,25 @@ export function useWorkoutLogs(): Doc<WorkoutLog>[] | undefined {
 export function useRunLogs(): Doc<RunLog>[] | undefined {
   return useLiveQuery(() => repos.runLogs.list(), [])
 }
+
+/*
+ * Single documents. The result is `undefined` while loading and
+ * `{ doc: undefined }` when the document does not exist.
+ */
+
+export function useWorkoutLog(id: string): { doc?: Doc<WorkoutLog> } | undefined {
+  return useLiveQuery(async () => ({ doc: await repos.workoutLogs.get(id) }), [id])
+}
+
+export function useRunLog(id: string | undefined): { doc?: Doc<RunLog> } | undefined {
+  return useLiveQuery(async () => ({ doc: id ? await repos.runLogs.get(id) : undefined }), [id])
+}
+
+export function useWorkoutTemplate(
+  id: string | undefined,
+): { doc?: Doc<WorkoutTemplate> } | undefined {
+  return useLiveQuery(
+    async () => ({ doc: id ? await repos.workoutTemplates.get(id) : undefined }),
+    [id],
+  )
+}

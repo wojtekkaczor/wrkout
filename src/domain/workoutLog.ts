@@ -37,6 +37,11 @@ export const workoutLogSchema = z.object({
   templateId: z.string().min(1).optional(),
   /** Session name at the time of logging, e.g. "Trening 1". */
   title: z.string().min(1).max(80),
+  /**
+   * A workout being filled in is `in_progress`; history, charts and reports
+   * only count finished ones. Imported and older documents are finished.
+   */
+  status: z.enum(['in_progress', 'done']).default('done'),
   /** The day the workout happened, which may be earlier than the day it was entered. */
   date: daySchema,
   loggedAt: z.number().int().nonnegative(),

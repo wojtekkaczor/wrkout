@@ -7,7 +7,16 @@ import {
   progressMetric,
   type ProgressMetric,
 } from '@/engine'
-import { Card, LineChart, Screen, describeSets, formatDay, formatKg, formatNumber } from '@/ui'
+import {
+  Card,
+  LineChart,
+  Screen,
+  describeSets,
+  formatDay,
+  formatKg,
+  formatNumber,
+  formatWeight,
+} from '@/ui'
 import { MUSCLE_LABELS, TIER_LABELS } from './labels'
 import { formatMetric } from './StrengthTab'
 import { useProgressData } from './useProgressData'
@@ -76,7 +85,7 @@ export function ExerciseScreen() {
                 {formatKg(Math.round(records.e1rm.value * 2) / 2)}
                 <span className="text-muted">
                   {' '}
-                  ({formatNumber(records.e1rm.weightKg)}×{records.e1rm.reps}, {formatDay(records.e1rm.date)})
+                  ({formatWeight(records.e1rm.weightKg)}×{records.e1rm.reps}, {formatDay(records.e1rm.date)})
                 </span>
               </dd>
             </>

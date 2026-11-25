@@ -9,8 +9,13 @@ export function formatNumber(value: number, maximumFractionDigits = 1): string {
   return value.toLocaleString('pl-PL', { maximumFractionDigits })
 }
 
+/** Weights keep two decimals so that 1.25 kg plates show exactly (`66,25`). */
+export function formatWeight(value: number): string {
+  return formatNumber(value, 2)
+}
+
 export function formatKg(value: number): string {
-  return `${formatNumber(value)} kg`
+  return `${formatWeight(value)} kg`
 }
 
 function toDate(day: string): Date {
@@ -64,6 +69,21 @@ export function formatDistance(metres: number): string {
   return `${formatNumber(metres / 1000, 2)} km`
 }
 
+/**
+ * Polish plural: `plural(1, FORMS)` → `1 seria`, 2–4 → `serie`, 5+ → `serii`
+ * (and 12–14 → `serii`). Forms are given as [one, few, many].
+ */
+export function plural(count: number, forms: readonly [string, string, string]): string {
+  const lastTwo = Math.abs(count) % 100
+  const last = lastTwo % 10
+  const form =
+    count === 1 ? forms[0] : last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14) ? forms[1] : forms[2]
+  return `${count} ${form}`
+}
+
+export const EXERCISES_FORMS = ['ćwiczenie', 'ćwiczenia', 'ćwiczeń'] as const
+export const SETS_FORMS = ['seria', 'serie', 'serii'] as const
+
 function amountOf(set: SetLike): string {
   if (set.durationSec !== undefined) {
     return `${formatNumber(set.durationSec)} s`
@@ -92,7 +112,7 @@ export function describeSets(sets: SetLike[]): string {
     return `${formatKg(firstWeight)} × ${amounts.join(', ')}`
   }
   const parts = sets.map((set, index) =>
-    `${set.weightKg === undefined ? '?' : formatNumber(set.weightKg)}×${amounts[index] ?? '–'}`,
+    `${set.weightKg === undefined ? '?' : formatWeight(set.weightKg)}×${amounts[index] ?? '–'}`,
   )
   return `${parts.join(', ')} kg`
 }

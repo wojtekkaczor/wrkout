@@ -11,9 +11,15 @@ test('switches between the four tabs', async ({ page }) => {
   await page.goto('/')
   const nav = page.getByRole('navigation', { name: 'Główna nawigacja' })
 
-  for (const tab of ['Plan', 'Postępy', 'Profil', 'Dziś']) {
+  const tabs = [
+    ['Treningi', 'Moje treningi'],
+    ['Postępy', 'Postępy'],
+    ['Profil', 'Profil'],
+    ['Dziś', 'Dziś'],
+  ] as const
+  for (const [tab, heading] of tabs) {
     await nav.getByRole('link', { name: tab }).click()
-    await expect(page.getByRole('heading', { level: 1, name: tab })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: heading })).toBeVisible()
   }
 })
 

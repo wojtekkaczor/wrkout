@@ -1,11 +1,15 @@
-import { Link, useParams } from 'react-router'
-import { Card, Screen, describeSets, formatDayLong, formatNumber } from '@/ui'
+import { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router'
+import { deleteWorkout } from '@/data'
+import { Button, Card, Screen, describeSets, formatDayLong, formatNumber } from '@/ui'
 import { TIER_LABELS } from './labels'
 import { useProgressData } from './useProgressData'
 
 /** One logged workout: every exercise with its sets. */
 export function WorkoutScreen() {
   const { logId = '' } = useParams()
+  const navigate = useNavigate()
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const data = useProgressData()
   const log = data.logs.find((entry) => entry.id === logId)
   const back = { to: '/postepy?widok=historia', label: 'Historia' }
@@ -66,6 +70,24 @@ export function WorkoutScreen() {
           })}
         </ol>
       </Card>
+      <Link
+        to={`/trening/${encodeURIComponent(logId)}`}
+        className="flex min-h-12 items-center justify-center rounded-xl border border-border bg-surface-2 text-base font-semibold"
+      >
+        Edytuj trening
+      </Link>
+      {confirmDelete ? (
+        <Button
+          variant="secondary"
+          onClick={() => void deleteWorkout(logId).then(() => navigate('/postepy?widok=historia'))}
+        >
+          Tak, usuń trening
+        </Button>
+      ) : (
+        <Button variant="secondary" onClick={() => setConfirmDelete(true)}>
+          Usuń trening
+        </Button>
+      )}
     </Screen>
   )
 }

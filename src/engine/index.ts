@@ -1,4 +1,5 @@
 export { addDays, dayToUtcMs, startOfWeek, utcMsToDay, weekdayOf } from './dates'
+export { draftExercises, draftSets } from './journal/draft'
 export {
   weekReport,
   weeksWithEntries,

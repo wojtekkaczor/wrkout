@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router'
 import type { Doc, RunLog } from '@/domain'
 import { paceSecPerKm, weeklyRunTotals } from '@/engine'
 import {
@@ -36,16 +37,24 @@ export function RunEntry({ run }: { run: Doc<RunLog> }) {
       <RunSummaryLine run={data} />
       {data.planned ? <p className="text-[13px] text-muted">Plan: {data.planned}</p> : null}
       {data.note ? <p className="text-[13px] text-muted">Notatka: {data.note}</p> : null}
-      {data.url ? (
-        <a
-          href={data.url}
-          target="_blank"
-          rel="noreferrer"
+      <span className="flex gap-4">
+        <Link
+          to={`/bieg/${encodeURIComponent(run.id)}`}
           className="inline-flex min-h-12 items-center text-[13px] text-accent"
         >
-          Otwórz aktywność
-        </a>
-      ) : null}
+          Edytuj
+        </Link>
+        {data.url ? (
+          <a
+            href={data.url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-12 items-center text-[13px] text-accent"
+          >
+            Otwórz aktywność
+          </a>
+        ) : null}
+      </span>
     </div>
   )
 }

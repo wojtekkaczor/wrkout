@@ -30,7 +30,7 @@ function workout(
     type: 'workoutLog',
     updatedAt: loggedAt,
     schemaVersion: 1,
-    data: { title: 'Trening 1', date, loggedAt, exercises },
+    data: { title: 'Trening 1', status: 'done', date, loggedAt, exercises },
   }
 }
 

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import type { Doc, RunLog, WorkoutLog } from '@/domain'
-import { Card, formatDay } from '@/ui'
+import { Card, EXERCISES_FORMS, SETS_FORMS, formatDay, plural } from '@/ui'
 import { RunEntry } from './RunningTab'
 import type { ProgressData } from './useProgressData'
 
@@ -55,8 +55,8 @@ export function HistoryTab({ data }: { data: ProgressData }) {
                 <span className="block text-[13px] text-muted">
                   {[
                     entry.log.data.context?.label,
-                    `${entry.log.data.exercises.length} ćwiczeń`,
-                    `${countSets(entry.log.data)} serii`,
+                    plural(entry.log.data.exercises.length, EXERCISES_FORMS),
+                    plural(countSets(entry.log.data), SETS_FORMS),
                   ]
                     .filter(Boolean)
                     .join(' · ')}

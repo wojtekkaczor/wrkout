@@ -291,7 +291,8 @@ Sześć kroków, każdy mieści się na jednym ekranie, z paskiem postępu:
 Do czasu włączenia programowania aplikacja działa jako dziennik. Różnice względem ekranów opisanych wyżej:
 
 - **Dziś** zamiast dzisiejszej sesji z planu pokazuje listę „Moich treningów” (z informacją, kiedy ostatnio wykonany) oraz przyciski „Bieg” i „Inny trening”. Jedno dotknięcie otwiera sesję do wpisania. Pod spodem skrót tygodnia: liczba treningów, kilometraż, rekordy.
-- **Plan** nazywa się w tym trybie **Treningi**: lista sesji do ułożenia i edycji (ćwiczenia, serie, zakresy). Start od gotowego szablonu podziału albo od pustej listy.
+- **Plan** nazywa się w tym trybie **Treningi**: lista sesji do ułożenia i edycji (ćwiczenia, serie, zakresy, tempo). Start od gotowego szablonu podziału albo od pustej listy.
+- **Zakończenie:** wpisywany trening ma status „w trakcie” i nie liczy się do historii ani raportów, dopóki nie zostanie zakończony raportem. Ekran „Dziś” pokazuje go jako „Kontynuuj”.
 - **Sesja:** pola serii wypełnia wynik z poprzedniego razu. „✓ wszystkie serie” i „Wszystko zgodnie z planem” znaczą „jak ostatnio”. Nie ma pytania o samopoczucie ani „Dlaczego?”.
 - **Postępy** działają w pełni: siła, bieganie (kilometraż, czas, tempo), raporty, historia, waga ciała.
 - Przy pierwszym uruchomieniu zamiast kreatora jest jeden ekran: „Wybierz szablon” albo „Ułóż własne treningi”.

@@ -12,7 +12,7 @@ type ScreenProps = {
 /** Page frame: heading plus scrollable content with screen margins. */
 export function Screen({ title, subtitle, back, children }: ScreenProps) {
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-4 px-4 pb-6 pt-[max(1rem,env(safe-area-inset-top))]">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-4 px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]">
       <header>
         {back ? (
           <Link to={back.to} className="-ml-1 inline-flex min-h-12 items-center text-base text-accent">

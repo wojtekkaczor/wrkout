@@ -1,23 +1,6 @@
-import type { MuscleGroup, RunLog, Tier } from '@/domain'
+import type { RunLog } from '@/domain'
 
-export const TIER_LABELS: Record<Tier, string> = {
-  main: 'Główne',
-  supplementary: 'Uzupełniające',
-  accessory: 'Dodatkowe',
-}
-
-export const MUSCLE_LABELS: Record<MuscleGroup, string> = {
-  chest: 'Klatka',
-  back: 'Plecy',
-  shoulders: 'Barki',
-  biceps: 'Biceps',
-  triceps: 'Triceps',
-  quads: 'Czworogłowe',
-  hamstrings: 'Dwugłowe',
-  glutes: 'Pośladki',
-  calves: 'Łydki',
-  abs: 'Brzuch',
-}
+export { MUSCLE_LABELS, TIER_LABELS } from '@/features/exercises/labels'
 
 export const RUN_TYPE_LABELS: Record<NonNullable<RunLog['runType']>, string> = {
   easy: 'Bieg spokojny',
